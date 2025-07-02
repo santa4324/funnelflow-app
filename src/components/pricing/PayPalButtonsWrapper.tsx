@@ -9,6 +9,9 @@ import {
 } from '@paypal/react-paypal-js';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { app } from '@/lib/firebase';
 
 type PayPalButtonsWrapperProps = {
   plan: {
@@ -17,9 +20,13 @@ type PayPalButtonsWrapperProps = {
   };
 };
 
+const db = getFirestore(app);
+
 export default function PayPalButtonsWrapper({ plan }: PayPalButtonsWrapperProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useAuth();
+  
   const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
   const starterPlanId = process.env.NEXT_PUBLIC_PAYPAL_STARTER_PLAN_ID;
   const premiumPlanId = process.env.NEXT_PUBLIC_PAYPAL_PREMIUM_PLAN_ID;
@@ -43,14 +50,39 @@ export default function PayPalButtonsWrapper({ plan }: PayPalButtonsWrapperProps
 
   const onApprove = async (data: OnApproveData, actions: OnApproveActions) => {
     console.log('Subscription approved:', data);
-    toast({
-        title: 'Payment Successful!',
-        description: `You've subscribed to the ${plan.name} plan. Redirecting to dashboard...`,
-    });
-    // The subscription is active on PayPal's side.
-    // Here you would typically save the subscription ID (data.subscriptionID) to your database, associated with the user.
-    console.log('Subscription ID:', data.subscriptionID);
-    router.push('/dashboard');
+    
+    if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        try {
+            await setDoc(userRef, {
+                subscription: {
+                    planName: plan.name,
+                    subscriptionId: data.subscriptionID,
+                    status: 'active',
+                    startDate: new Date(),
+                }
+            }, { merge: true });
+            
+            toast({
+                title: 'Payment Successful!',
+                description: `You've subscribed to the ${plan.name} plan. Redirecting to dashboard...`,
+            });
+            router.push('/dashboard');
+        } catch (error) {
+            console.error('Error saving subscription to database:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Database Error',
+                description: 'Your payment was successful, but we failed to update your account. Please contact support.',
+            });
+        }
+    } else {
+         toast({
+            variant: 'destructive',
+            title: 'Authentication Error',
+            description: 'You must be logged in to complete a purchase.',
+        });
+    }
   };
 
   const onError = (err: any) => {

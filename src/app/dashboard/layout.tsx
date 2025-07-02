@@ -16,13 +16,45 @@ import {
 import { Bot, LayoutDashboard, Settings, LogOut, VenetianMask, BarChart, Users, FileText, LifeBuoy } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { logout } = useAuth();
+  const { user, logout, loading } = useAuth();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+
+  if (loading || !user) {
+    return (
+       <div className="flex min-h-screen">
+          <div className="hidden md:flex flex-col w-64 border-r p-4 gap-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <div className="mt-auto">
+                <Skeleton className="h-8 w-full mt-4" />
+                <Skeleton className="h-10 w-full mt-2" />
+              </div>
+          </div>
+          <div className="flex-1 p-6">
+              <Skeleton className="h-12 w-1/3 mb-6" />
+              <Skeleton className="w-full h-[400px]" />
+          </div>
+        </div>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -84,12 +116,12 @@ export default function DashboardLayout({
               <SidebarMenuItem>
                   <div className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm">
                     <Avatar className="size-7">
-                      <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="person" />
-                      <AvatarFallback>U</AvatarFallback>
+                      {user.photoURL ? <AvatarImage src={user.photoURL} alt={user.displayName || 'User'} /> : <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="person" /> }
+                      <AvatarFallback>{user.email ? user.email.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col">
-                      <span className="font-medium">User</span>
-                      <span className="text-xs text-muted-foreground">user@email.com</span>
+                    <div className="flex flex-col truncate">
+                      <span className="font-medium truncate">{user.displayName || 'User'}</span>
+                      <span className="text-xs text-muted-foreground truncate">{user.email}</span>
                     </div>
                   </div>
               </SidebarMenuItem>

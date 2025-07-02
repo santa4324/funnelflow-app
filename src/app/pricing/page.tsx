@@ -10,6 +10,7 @@ import PayPalButtonsWrapper from '@/components/pricing/PayPalButtonsWrapper';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const plans = [
   {
@@ -48,15 +49,66 @@ type Plan = (typeof plans)[0];
 
 export default function PricingPage() {
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-    const { isAuthenticated } = useAuth();
+    const { user, loading } = useAuth();
     const router = useRouter();
 
     const handleChoosePlan = (plan: Plan) => {
-        if (isAuthenticated) {
+        if (user) {
             setSelectedPlan(plan);
         } else {
             router.push('/signup');
         }
+    }
+
+    if(loading) {
+      return (
+         <div className="flex min-h-screen flex-col">
+          <Header />
+           <main className="flex-1">
+             <section className="w-full py-20 md:py-24">
+               <div className="container mx-auto max-w-screen-xl px-4">
+                  <div className="mx-auto max-w-2xl text-center">
+                    <Skeleton className="h-10 w-3/4 mx-auto" />
+                    <Skeleton className="h-6 w-full mt-4 mx-auto" />
+                  </div>
+                  <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 md:max-w-4xl mx-auto">
+                      <Card className="flex flex-col">
+                          <CardHeader className="p-6">
+                              <Skeleton className="h-8 w-1/2" />
+                              <Skeleton className="h-4 w-3/4 mt-2" />
+                              <Skeleton className="h-10 w-1/3 mt-4" />
+                          </CardHeader>
+                          <CardContent className="flex-1 p-6 space-y-3">
+                              <Skeleton className="h-5 w-full" />
+                              <Skeleton className="h-5 w-full" />
+                              <Skeleton className="h-5 w-full" />
+                          </CardContent>
+                          <CardFooter className="p-6">
+                              <Skeleton className="h-12 w-full" />
+                          </CardFooter>
+                      </Card>
+                       <Card className="flex flex-col">
+                          <CardHeader className="p-6">
+                              <Skeleton className="h-8 w-1/2" />
+                              <Skeleton className="h-4 w-3/4 mt-2" />
+                              <Skeleton className="h-10 w-1/3 mt-4" />
+                          </CardHeader>
+                          <CardContent className="flex-1 p-6 space-y-3">
+                              <Skeleton className="h-5 w-full" />
+                              <Skeleton className="h-5 w-full" />
+                              <Skeleton className="h-5 w-full" />
+                          </CardContent>
+                          <CardFooter className="p-6">
+                              <Skeleton className="h-12 w-full" />
+                          </CardFooter>
+                      </Card>
+                  </div>
+               </div>
+             </section>
+           </main>
+          <Footer />
+        </div>
+      )
     }
 
 
@@ -103,7 +155,7 @@ export default function PricingPage() {
               ))}
             </div>
 
-            {selectedPlan && (
+            {selectedPlan && user && (
                 <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={() => setSelectedPlan(null)}>
                     <Card className="w-full max-w-md shadow-2xl m-4" onClick={(e) => e.stopPropagation()}>
                         <CardHeader>
@@ -119,6 +171,9 @@ export default function PricingPage() {
                             <div className='flex justify-between items-baseline'>
                                 <p className='text-lg'>Total:</p>
                                 <p><span className="text-3xl font-bold">${selectedPlan.price}</span><span className="text-muted-foreground">{selectedPlan.period}</span></p>
+                            </div>
+                             <div className='text-sm text-muted-foreground'>
+                                <p>Signed in as: <span className="font-medium text-foreground">{user.email}</span></p>
                             </div>
                             <Separator />
                             <p className="text-sm text-center text-muted-foreground">Choose your payment method</p>
