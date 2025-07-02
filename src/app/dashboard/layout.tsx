@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   SidebarProvider,
@@ -13,12 +15,15 @@ import {
 } from '@/components/ui/sidebar';
 import { Bot, LayoutDashboard, Settings, LogOut, VenetianMask, BarChart, Users, FileText, LifeBuoy } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { logout } = useAuth();
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -77,17 +82,21 @@ export default function DashboardLayout({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                 <SidebarMenuButton href="/">
-                  <div className="flex w-full items-center gap-2">
+                  <div className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm">
                     <Avatar className="size-7">
-                      <AvatarImage src="https://placehold.co/100x100.png" />
+                      <AvatarImage src="https://placehold.co/100x100.png" data-ai-hint="person" />
                       <AvatarFallback>U</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col text-left">
-                      <span className="text-sm font-medium">User</span>
+                    <div className="flex flex-col">
+                      <span className="font-medium">User</span>
                       <span className="text-xs text-muted-foreground">user@email.com</span>
                     </div>
                   </div>
+              </SidebarMenuItem>
+               <SidebarMenuItem>
+                 <SidebarMenuButton onClick={logout}>
+                  <LogOut />
+                  Logout
                 </SidebarMenuButton>
               </SidebarMenuItem>
            </SidebarMenu>

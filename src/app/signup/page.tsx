@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 
 const signupSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -21,6 +22,7 @@ const signupSchema = z.object({
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { login } = useAuth();
   
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -33,6 +35,7 @@ export default function SignupPage() {
   const onSubmit = (values: z.infer<typeof signupSchema>) => {
     console.log('Signup attempt with:', values);
     // Mock successful signup
+    login();
     toast({
       title: 'Account Created!',
       description: 'Redirecting you to the pricing page...',
@@ -43,6 +46,7 @@ export default function SignupPage() {
   const handleGoogleSignIn = () => {
     console.log('Google Sign-In clicked');
     // Mock successful Google signup
+    login();
     toast({
       title: 'Account Created!',
       description: 'Redirecting you to the pricing page...',

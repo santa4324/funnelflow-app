@@ -8,6 +8,8 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import PayPalButtonsWrapper from '@/components/pricing/PayPalButtonsWrapper';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const plans = [
   {
@@ -42,8 +44,20 @@ const plans = [
   },
 ];
 
+type Plan = (typeof plans)[0];
+
 export default function PricingPage() {
-    const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
+    const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    const handleChoosePlan = (plan: Plan) => {
+        if (isAuthenticated) {
+            setSelectedPlan(plan);
+        } else {
+            router.push('/signup');
+        }
+    }
 
 
   return (
@@ -81,7 +95,7 @@ export default function PricingPage() {
                     </ul>
                   </CardContent>
                   <CardFooter className="p-6">
-                     <Button onClick={() => setSelectedPlan(plan)} className="w-full" size="lg" variant={plan.isPopular ? 'default' : 'outline'}>
+                     <Button onClick={() => handleChoosePlan(plan)} className="w-full" size="lg" variant={plan.isPopular ? 'default' : 'outline'}>
                         {plan.cta}
                     </Button>
                   </CardFooter>
