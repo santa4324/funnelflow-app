@@ -59,7 +59,7 @@ export default function SignupPage() {
             <span className="font-bold font-headline text-2xl">FunnelFlow</span>
           </Link>
           <CardTitle className="font-headline text-3xl">Create an Account</CardTitle>
-          <CardDescription>Start your 7-day free trial today. No credit card required.</CardDescription>
+          <CardDescription>Get started by creating an account. No credit card required upfront.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

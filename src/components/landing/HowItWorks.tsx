@@ -21,7 +21,7 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="w-full py-20 md:py-24 bg-card">
+    <section id="how-it-works" className="w-full py-20 md:py-24 bg-background">
       <div className="container mx-auto max-w-screen-xl px-4">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">How It Works</h2>
@@ -31,7 +31,7 @@ export default function HowItWorks() {
         </div>
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
           {steps.map((step, index) => (
-            <Card key={index} className="flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card key={index} className="flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-300 border-transparent hover:border-primary bg-card">
               <CardHeader>
                 <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
                   {step.icon}

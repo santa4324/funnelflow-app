@@ -27,7 +27,7 @@ export default function Testimonials() {
   ];
 
   return (
-    <section id="testimonials" className="w-full py-20 md:py-24 bg-card">
+    <section id="testimonials" className="w-full py-20 md:py-24 bg-background">
       <div className="container mx-auto max-w-screen-xl px-4">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Loved by Businesses Worldwide</h2>
@@ -37,12 +37,12 @@ export default function Testimonials() {
         </div>
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="p-6 shadow-lg">
+            <Card key={index} className="p-6 shadow-lg bg-card">
               <CardContent className="p-0">
                 <p className="italic text-muted-foreground">"{testimonial.quote}"</p>
                 <div className="mt-6 flex items-center gap-4">
                   <Avatar>
-                    <AvatarImage src={testimonial.image} alt={testimonial.name} />
+                    <AvatarImage src={testimonial.image} alt={testimonial.name} data-ai-hint="person" />
                     <AvatarFallback>{testimonial.avatar}</AvatarFallback>
                   </Avatar>
                   <div>

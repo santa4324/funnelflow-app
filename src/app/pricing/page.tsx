@@ -1,27 +1,18 @@
-import Link from 'next/link';
+'use client';
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check } from 'lucide-react';
+import { Check, CreditCard, X } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import PayPalButtonsWrapper from '@/components/pricing/PayPalButtonsWrapper';
+import { Separator } from '@/components/ui/separator';
 
 const plans = [
   {
-    name: 'Free Trial',
-    price: '$0',
-    period: '/ 7 days',
-    description: 'Explore the core features and see the magic for yourself.',
-    features: [
-      '1 Funnel Generation',
-      'Basic AI Content Tools',
-      'Up to 10 Leads',
-    ],
-    cta: 'Start for Free',
-    isPopular: false,
-  },
-  {
     name: 'Starter',
-    price: '$49',
+    price: '49',
     period: '/ month',
     description: 'Perfect for small businesses and solo entrepreneurs.',
     features: [
@@ -36,7 +27,7 @@ const plans = [
   },
   {
     name: 'Premium',
-    price: '$99',
+    price: '99',
     period: '/ month',
     description: 'For growing businesses and agencies that need more power.',
     features: [
@@ -52,6 +43,9 @@ const plans = [
 ];
 
 export default function PricingPage() {
+    const [selectedPlan, setSelectedPlan] = useState<(typeof plans)[0] | null>(null);
+
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -64,7 +58,7 @@ export default function PricingPage() {
                 Choose the plan that's right for you. No hidden fees, cancel anytime.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 md:max-w-4xl mx-auto">
               {plans.map((plan) => (
                 <Card key={plan.name} className={`flex flex-col shadow-lg hover:shadow-2xl transition-shadow duration-300 ${plan.isPopular ? 'border-primary ring-2 ring-primary' : ''}`}>
                   <CardHeader className="p-6">
@@ -72,7 +66,7 @@ export default function PricingPage() {
                     <CardTitle className="font-headline text-3xl">{plan.name}</CardTitle>
                     <CardDescription>{plan.description}</CardDescription>
                     <div>
-                      <span className="text-4xl font-bold">{plan.price}</span>
+                      <span className="text-4xl font-bold">${plan.price}</span>
                       <span className="text-muted-foreground">{plan.period}</span>
                     </div>
                   </CardHeader>
@@ -87,13 +81,43 @@ export default function PricingPage() {
                     </ul>
                   </CardContent>
                   <CardFooter className="p-6">
-                    <Button asChild className="w-full" size="lg" variant={plan.isPopular ? 'default' : 'outline'}>
-                      <Link href="/signup">{plan.cta}</Link>
+                     <Button onClick={() => setSelectedPlan(plan)} className="w-full" size="lg" variant={plan.isPopular ? 'default' : 'outline'}>
+                        {plan.cta}
                     </Button>
                   </CardFooter>
                 </Card>
               ))}
             </div>
+
+            {selectedPlan && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={() => setSelectedPlan(null)}>
+                    <Card className="w-full max-w-md shadow-2xl m-4" onClick={(e) => e.stopPropagation()}>
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <CardTitle className="font-headline text-2xl">Complete Your Purchase</CardTitle>
+                                <Button variant="ghost" size="icon" onClick={() => setSelectedPlan(null)}>
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <CardDescription>You're purchasing the <span className='font-bold text-primary'>{selectedPlan.name}</span> plan.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className='flex justify-between items-baseline'>
+                                <p className='text-lg'>Total:</p>
+                                <p><span className="text-3xl font-bold">${selectedPlan.price}</span><span className="text-muted-foreground">{selectedPlan.period}</span></p>
+                            </div>
+                            <Separator />
+                            <p className="text-sm text-center text-muted-foreground">Choose your payment method</p>
+                            <PayPalButtonsWrapper plan={selectedPlan} />
+                             <Button variant="outline" className="w-full" disabled>
+                                <CreditCard className="mr-2 h-4 w-4" />
+                                Pay with Credit Card (Coming Soon)
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
           </div>
         </section>
       </main>

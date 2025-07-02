@@ -21,7 +21,7 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section id="why-choose-us" className="w-full py-20 md:py-24">
+    <section id="why-choose-us" className="w-full py-20 md:py-24 bg-card">
       <div className="container mx-auto max-w-screen-xl px-4">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Why Choose FunnelFlow?</h2>
@@ -31,17 +31,15 @@ export default function WhyChooseUs() {
         </div>
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
           {features.map((feature, index) => (
-            <Card key={index} className="border-0 bg-transparent shadow-none">
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: 'hsla(var(--accent), 0.1)' }}>
+            <div key={index} className="flex items-start gap-6">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: 'hsla(var(--accent), 0.1)' }}>
                   {feature.icon}
                 </div>
-                <CardTitle className="font-headline text-2xl">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </CardContent>
-            </Card>
+                <div>
+                  <h3 className="font-headline text-2xl font-semibold">{feature.title}</h3>
+                  <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                </div>
+            </div>
           ))}
         </div>
       </div>

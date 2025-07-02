@@ -5,17 +5,26 @@ import HowItWorks from '@/components/landing/HowItWorks';
 import WhyChooseUs from '@/components/landing/WhyChooseUs';
 import Testimonials from '@/components/landing/Testimonials';
 import PricingPreview from '@/components/landing/PricingPreview';
+import AnimatedSection from '@/components/landing/AnimatedSection';
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 overflow-x-hidden">
         <HeroSection />
-        <HowItWorks />
-        <WhyChooseUs />
-        <Testimonials />
-        <PricingPreview />
+        <AnimatedSection>
+            <HowItWorks />
+        </AnimatedSection>
+        <AnimatedSection>
+            <WhyChooseUs />
+        </AnimatedSection>
+        <AnimatedSection>
+            <Testimonials />
+        </AnimatedSection>
+        <AnimatedSection>
+            <PricingPreview />
+        </AnimatedSection>
       </main>
       <Footer />
     </div>
