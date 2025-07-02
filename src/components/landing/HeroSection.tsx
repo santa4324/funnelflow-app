@@ -26,12 +26,11 @@ export default function HeroSection() {
                 </div>
                 <div className="flex justify-center">
                     <Image 
-                        src="https://placehold.co/600x400.png"
-                        alt="Marketing Funnel Illustration"
+                        src="https://images.unsplash.com/photo-1557804506-669a67965ba0"
+                        alt="Marketing professionals collaborating"
                         width={600}
                         height={400}
-                        className="rounded-xl shadow-2xl"
-                        data-ai-hint="marketing automation"
+                        className="rounded-xl shadow-2xl object-cover"
                         priority
                     />
                 </div>
