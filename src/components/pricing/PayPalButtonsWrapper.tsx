@@ -22,8 +22,8 @@ export default function PayPalButtonsWrapper({ plan }: PayPalButtonsWrapperProps
   const router = useRouter();
   const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
-  if (!paypalClientId || paypalClientId === 'test') {
-    return <p className="text-destructive text-center text-sm p-4 bg-destructive/10 rounded-md">PayPal is not configured. Please contact support.</p>;
+  if (!paypalClientId || paypalClientId === 'YOUR_PAYPAL_CLIENT_ID_HERE') {
+    return <p className="text-destructive text-center text-sm p-4 bg-destructive/10 rounded-md">PayPal is not configured. Please add your Client ID to the .env file.</p>;
   }
 
   const createOrder = (data: Record<string, unknown>, actions: CreateOrderActions) => {

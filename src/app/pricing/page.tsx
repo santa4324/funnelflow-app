@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, CreditCard, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import PayPalButtonsWrapper from '@/components/pricing/PayPalButtonsWrapper';
@@ -109,10 +109,6 @@ export default function PricingPage() {
                             <Separator />
                             <p className="text-sm text-center text-muted-foreground">Choose your payment method</p>
                             <PayPalButtonsWrapper plan={selectedPlan} />
-                             <Button variant="outline" className="w-full" disabled>
-                                <CreditCard className="mr-2 h-4 w-4" />
-                                Pay with Credit Card (Coming Soon)
-                            </Button>
                         </CardContent>
                     </Card>
                 </div>
