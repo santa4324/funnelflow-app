@@ -82,33 +82,43 @@ export default function DashboardLayout({
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive={pathname === '/dashboard'} tooltip="Dashboard">
-                <LayoutDashboard />
-                Dashboard
+              <SidebarMenuButton asChild isActive={pathname === '/dashboard'} tooltip="Dashboard">
+                <Link href="/dashboard">
+                  <LayoutDashboard />
+                  Dashboard
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/funnels" isActive={pathname.startsWith('/dashboard/funnels')} tooltip="Funnels">
-                <FileText />
-                My Funnels
+              <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/funnels')} tooltip="Funnels">
+                <Link href="/dashboard/funnels">
+                  <FileText />
+                  My Funnels
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/leads" isActive={pathname.startsWith('/dashboard/leads')} tooltip="Leads">
-                <Users />
-                Leads CRM
+              <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/leads')} tooltip="Leads">
+                <Link href="/dashboard/leads">
+                  <Users />
+                  Leads CRM
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/analytics" isActive={pathname.startsWith('/dashboard/analytics')} tooltip="Analytics">
-                <BarChart />
-                Analytics
+              <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/analytics')} tooltip="Analytics">
+                <Link href="/dashboard/analytics">
+                  <BarChart />
+                  Analytics
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/agency" isActive={pathname.startsWith('/dashboard/agency')} tooltip="Agency">
-                 <VenetianMask />
-                Agency Mode
+              <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/agency')} tooltip="Agency">
+                 <Link href="/dashboard/agency">
+                  <VenetianMask />
+                  Agency Mode
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -116,15 +126,19 @@ export default function DashboardLayout({
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-                <SidebarMenuButton href="/dashboard/help" isActive={pathname.startsWith('/dashboard/help')} tooltip="Help">
-                  <LifeBuoy />
-                  Help & Support
+                <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/help')} tooltip="Help">
+                  <Link href="/dashboard/help">
+                    <LifeBuoy />
+                    Help & Support
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton href="/dashboard/settings" isActive={pathname.startsWith('/dashboard/settings')} tooltip="Settings">
-                  <Settings />
-                  Settings
+                <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/settings')} tooltip="Settings">
+                  <Link href="/dashboard/settings">
+                    <Settings />
+                    Settings
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
