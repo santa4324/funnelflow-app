@@ -32,4 +32,5 @@ export interface Lead {
     funnelId: string;
     funnelName: string;
     collectedAt: Date;
+    emailsSent?: string[];
 }

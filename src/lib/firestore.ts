@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 
 const db: Firestore | undefined = isFirebaseConfigured && app ? getFirestore(app) : undefined;
 
-function ensureDb(): Firestore {
+export function ensureDb(): Firestore {
     if (!db) {
         throw new Error("Firestore is not configured. Please add your Firebase credentials to the .env file.");
     }
@@ -105,23 +105,13 @@ export async function getPublicFunnel(funnelId: string): Promise<PublicFunnel | 
 
 export async function saveLead(userId: string, funnelId: string, name: string, email: string): Promise<void> {
     const db = ensureDb();
-    // We get the funnel from the private collection to ensure we have the correct name.
     const funnel = await getFunnel(userId, funnelId);
-    if (!funnel) {
-        // Fallback to public funnel data if private one not found (should be rare)
-        const publicFunnel = await getPublicFunnel(funnelId);
-         if (!publicFunnel) {
-            throw new Error("Funnel not found");
-         }
-         const leadsCollectionRef = collection(db, 'users', userId, 'leads');
-         await addDoc(leadsCollectionRef, {
-            name,
-            email,
-            funnelId,
-            funnelName: publicFunnel.name,
-            collectedAt: Timestamp.fromDate(new Date()),
-        });
-        return;
+    const publicFunnel = !funnel ? await getPublicFunnel(funnelId) : null;
+
+    const funnelName = funnel?.name || publicFunnel?.name;
+
+    if (!funnelName) {
+        throw new Error("Funnel not found");
     }
 
     const leadsCollectionRef = collection(db, 'users', userId, 'leads');
@@ -129,8 +119,9 @@ export async function saveLead(userId: string, funnelId: string, name: string, e
         name,
         email,
         funnelId,
-        funnelName: funnel.name,
+        funnelName: funnelName,
         collectedAt: Timestamp.fromDate(new Date()),
+        emailsSent: [],
     });
 }
 
@@ -149,6 +140,7 @@ export async function getLeads(userId: string): Promise<Lead[]> {
             funnelId: data.funnelId,
             funnelName: data.funnelName,
             collectedAt: data.collectedAt.toDate(),
+            emailsSent: data.emailsSent || [],
         } as Lead;
     });
 }

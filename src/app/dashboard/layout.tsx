@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Bot, LayoutDashboard, Settings, LogOut, VenetianMask, BarChart, Users, FileText, LifeBuoy } from 'lucide-react';
+import { Bot, LayoutDashboard, Settings, LogOut, VenetianMask, BarChart, Users, FileText, LifeBuoy, Mail } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -94,6 +94,7 @@ export default function DashboardLayout({
     '/dashboard': 'Dashboard',
     '/dashboard/funnels': 'My Funnels',
     '/dashboard/leads': 'Leads CRM',
+    '/dashboard/campaigns': 'Email Campaigns',
     '/dashboard/analytics': 'Analytics',
     '/dashboard/agency': 'Agency Mode',
     '/dashboard/help': 'Help & Support',
@@ -126,6 +127,14 @@ export default function DashboardLayout({
                 <Link href="/dashboard/funnels">
                   <FileText />
                   My Funnels
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/campaigns')} tooltip="Campaigns">
+                <Link href="/dashboard/campaigns">
+                  <Mail />
+                  Campaigns
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
