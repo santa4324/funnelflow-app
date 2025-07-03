@@ -21,10 +21,6 @@ const isFirebaseConfigured = !!(firebaseConfig.apiKey && !firebaseConfig.apiKey.
 if (isFirebaseConfigured) {
   // Initialize Firebase
   app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-} else {
-  // This will log a more helpful error on the server and in the browser console.
-  console.error("Firebase configuration is missing or contains placeholder values. Please update your .env file. Auth and database features will be disabled.");
 }
-
 
 export { app, isFirebaseConfigured };
