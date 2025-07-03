@@ -66,7 +66,9 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
       toast({ variant: 'destructive', title: 'Error', description: 'Missing required information to save.' });
       return;
     }
+    
     setIsSaving(true);
+    
     try {
       const newFunnelId = await saveFunnel(user.uid, businessInfo, generatedContent);
       toast({
@@ -75,11 +77,15 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
       });
       router.push(`/dashboard/funnels/${newFunnelId}`);
     } catch (error) {
-      console.error('Error saving funnel:', error);
-      toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save the funnel. Please try again.' });
+      console.error('Error during save or navigation:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Operation Failed',
+        description: 'Could not save the funnel. Please try again.',
+      });
+      // This is crucial: ensure we stop the loading spinner on any failure.
       setIsSaving(false);
     }
-    // No need to set isSaving to false in the success case because we are navigating away.
   };
 
   if (!businessInfo) {
