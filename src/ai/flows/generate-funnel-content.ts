@@ -24,10 +24,19 @@ const GenerateFunnelContentInputSchema = z.object({
 });
 export type GenerateFunnelContentInput = z.infer<typeof GenerateFunnelContentInputSchema>;
 
+const EmailSchema = z.object({
+  subject: z.string().describe('The subject line for the email.'),
+  body: z.string().describe('The body content for the email.'),
+});
+
 const GenerateFunnelContentOutputSchema = z.object({
   landingPageCopy: z.string().describe('The generated landing page copy.'),
   leadCaptureForm: z.string().describe('The generated lead capture form.'),
-  emailSequence: z.array(z.string()).describe('The generated email follow-up sequence (3-5 emails).'),
+  emailSequence: z
+    .array(EmailSchema)
+    .describe(
+      'The generated email follow-up sequence (3-5 emails), each with a subject and body.'
+    ),
   thankYouPage: z.string().describe('The generated thank you page content.'),
 });
 export type GenerateFunnelContentOutput = z.infer<typeof GenerateFunnelContentOutputSchema>;
@@ -53,25 +62,11 @@ Social URLs: {{{socialUrls}}}
 Instructions:
 1.  Landing Page Copy: Create persuasive and engaging copy that highlights the benefits of the offer and encourages visitors to sign up.
 2.  Lead Capture Form: Design a simple form to collect name and email address. Ensure it is concise and user-friendly.
-3.  Email Follow-up Sequence: Write 3-5 emails to nurture leads. The first email should deliver the promised offer. Subsequent emails should build trust, provide value, and promote the core product/service.
+3.  Email Follow-up Sequence: Write 3-5 emails to nurture leads. For each email, provide a distinct subject line and body. The first email should deliver the promised offer. Subsequent emails should build trust, provide value, and promote the core product/service.
 4.  Thank You Page: Craft a thank you page that confirms the user's subscription and provides clear next steps.
 
-Ensure the output is well-structured and ready for immediate use.
-
-Output:
-Landing Page Copy:
-{{landingPageCopy}}
-
-Lead Capture Form:
-{{leadCaptureForm}}
-
-Email Sequence:
-{{#each emailSequence}}
-{{{this}}}
-{{/each}}
-
-Thank You Page:
-{{thankYouPage}}`,
+Ensure the output is a valid JSON object matching the provided schema.
+`,
 });
 
 const generateFunnelContentFlow = ai.defineFlow(

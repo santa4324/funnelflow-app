@@ -113,9 +113,9 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
                     <Accordion type="multiple" className="w-full space-y-2">
                         {generatedContent.emailSequence.map((email, index) => (
                              <AccordionItem key={index} value={`email-${index}`} className="border rounded-md px-4">
-                                <AccordionTrigger>Email #{index + 1}</AccordionTrigger>
+                                <AccordionTrigger>Email #{index + 1}: {email.subject}</AccordionTrigger>
                                 <AccordionContent className="prose max-w-none p-2 bg-muted/30 rounded-md whitespace-pre-wrap font-body">
-                                    {email}
+                                    {email.body}
                                 </AccordionContent>
                              </AccordionItem>
                         ))}
