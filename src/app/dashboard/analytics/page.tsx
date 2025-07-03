@@ -10,29 +10,20 @@ import type { Funnel } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { format } from 'date-fns';
 
-// Mock data for charts
-const funnelPerformanceData = [
-  { name: 'Visitors', value: 1245 },
-  { name: 'Leads', value: 235 },
-  { name: 'Customers', value: 45 },
-];
-
-const leadGenerationData = [
-  { date: 'Day 1', leads: 22 },
-  { date: 'Day 2', leads: 35 },
-  { date: 'Day 3', leads: 48 },
-  { date: 'Day 4', leads: 41 },
-  { date: 'Day 5', leads: 56 },
-  { date: 'Day 6', leads: 62 },
-  { date: 'Day 7', leads: 78 },
-];
+interface ChartData {
+  performance: { name: string; value: number }[];
+  leadGen: { date: string; leads: number }[];
+}
 
 export default function AnalyticsPage() {
   const { user } = useAuth();
   const [funnels, setFunnels] = useState<Funnel[]>([]);
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [generatingChartData, setGeneratingChartData] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -46,6 +37,43 @@ export default function AnalyticsPage() {
         .finally(() => setLoading(false));
     }
   }, [user]);
+  
+  useEffect(() => {
+    if (selectedFunnelId) {
+      setGeneratingChartData(true);
+      // In a real app, you'd fetch this data. Here, we simulate it.
+      const timer = setTimeout(() => {
+        // Generate funnel performance data
+        const visitors = Math.floor(Math.random() * 2000) + 500;
+        const leads = Math.floor(visitors * (Math.random() * 0.2 + 0.1));
+        const customers = Math.floor(leads * (Math.random() * 0.15 + 0.05));
+        const performanceData = [
+          { name: 'Visitors', value: visitors },
+          { name: 'Leads', value: leads },
+          { name: 'Customers', value: customers },
+        ];
+
+        // Generate lead generation data for the last 7 days
+        const leadGenData = [];
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          leadGenData.push({
+            date: format(date, 'MMM d'),
+            leads: Math.floor(Math.random() * (leads/7 * (Math.random() * 0.5 + 0.75))) + 5,
+          });
+        }
+        
+        setChartData({
+          performance: performanceData,
+          leadGen: leadGenData,
+        });
+        setGeneratingChartData(false);
+      }, 500); // Simulate network delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedFunnelId]);
 
   const selectedFunnel = funnels.find(f => f.id === selectedFunnelId);
 
@@ -54,7 +82,7 @@ export default function AnalyticsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">Funnel Analytics</CardTitle>
-          <CardDescription>Track your funnel performance and conversion rates.</CardDescription>
+          <CardDescription>Track your funnel performance and conversion rates. Data shown is for simulation purposes.</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -91,37 +119,45 @@ export default function AnalyticsPage() {
             <Card>
                 <CardHeader>
                 <CardTitle>Funnel Performance</CardTitle>
-                <CardDescription>A snapshot of visitors, leads, and customers for '{selectedFunnel?.name}'.</CardDescription>
+                <CardDescription>Simulated snapshot of visitors, leads, and customers for '{selectedFunnel?.name}'.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={funnelPerformanceData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" fill="hsl(var(--primary))" />
-                    </BarChart>
-                </ResponsiveContainer>
+                {generatingChartData || !chartData ? (
+                  <Skeleton className="h-[300px] w-full" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={chartData.performance}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="value" fill="hsl(var(--primary))" />
+                      </BarChart>
+                  </ResponsiveContainer>
+                )}
                 </CardContent>
             </Card>
             <Card>
                 <CardHeader>
                 <CardTitle>Lead Generation (Last 7 Days)</CardTitle>
-                <CardDescription>Shows the number of new leads acquired over time.</CardDescription>
+                <CardDescription>Simulated number of new leads acquired over time.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={leadGenerationData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="leads" stroke="hsl(var(--accent))" activeDot={{ r: 8 }} />
-                    </LineChart>
-                </ResponsiveContainer>
+                 {generatingChartData || !chartData ? (
+                  <Skeleton className="h-[300px] w-full" />
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={chartData.leadGen}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="leads" stroke="hsl(var(--accent))" activeDot={{ r: 8 }} />
+                      </LineChart>
+                  </ResponsiveContainer>
+                )}
                 </CardContent>
             </Card>
         </div>
