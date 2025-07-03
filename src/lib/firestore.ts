@@ -1,15 +1,24 @@
-import { app } from '@/lib/firebase';
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { app, isFirebaseConfigured } from '@/lib/firebase';
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp, type Firestore } from 'firebase/firestore';
 import type { BusinessInfo, Funnel, GenerateFunnelContentOutput } from '@/lib/types';
 import { format } from 'date-fns';
 
-const db = getFirestore(app);
+const db: Firestore | undefined = isFirebaseConfigured && app ? getFirestore(app) : undefined;
+
+function ensureDb(): Firestore {
+    if (!db) {
+        throw new Error("Firestore is not configured. Please add your Firebase credentials to the .env file.");
+    }
+    return db;
+}
+
 
 export async function saveFunnel(
     userId: string,
     businessInfo: BusinessInfo,
     generatedContent: GenerateFunnelContentOutput
 ): Promise<string> {
+    const db = ensureDb();
     const funnelName = `${businessInfo.businessName} - ${format(new Date(), 'MM/dd/yyyy')}`;
     const funnelsCollectionRef = collection(db, 'users', userId, 'funnels');
     const docRef = await addDoc(funnelsCollectionRef, {
@@ -23,6 +32,7 @@ export async function saveFunnel(
 
 
 export async function getFunnels(userId: string): Promise<Funnel[]> {
+    const db = ensureDb();
     const funnelsCollectionRef = collection(db, 'users', userId, 'funnels');
     const q = query(funnelsCollectionRef, orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
@@ -41,6 +51,7 @@ export async function getFunnels(userId: string): Promise<Funnel[]> {
 }
 
 export async function getFunnel(userId: string, funnelId: string): Promise<Funnel | null> {
+    const db = ensureDb();
     const funnelDocRef = doc(db, 'users', userId, 'funnels', funnelId);
     const docSnap = await getDoc(funnelDocRef);
 

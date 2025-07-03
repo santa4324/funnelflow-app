@@ -10,8 +10,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
+import { getFirestore, doc, setDoc, type Firestore } from 'firebase/firestore';
+import { app, isFirebaseConfigured } from '@/lib/firebase';
 
 type PayPalButtonsWrapperProps = {
   plan: {
@@ -20,7 +20,7 @@ type PayPalButtonsWrapperProps = {
   };
 };
 
-const db = getFirestore(app);
+const db: Firestore | undefined = isFirebaseConfigured && app ? getFirestore(app) : undefined;
 
 export default function PayPalButtonsWrapper({ plan }: PayPalButtonsWrapperProps) {
   const { toast } = useToast();
@@ -51,6 +51,15 @@ export default function PayPalButtonsWrapper({ plan }: PayPalButtonsWrapperProps
   const onApprove = async (data: OnApproveData, actions: OnApproveActions) => {
     console.log('Subscription approved:', data);
     
+    if (!db) {
+        toast({
+            variant: 'destructive',
+            title: 'Database Error',
+            description: 'Your payment was successful, but the database is not configured. Please contact support.',
+        });
+        return;
+    }
+
     if (user) {
         const userRef = doc(db, 'users', user.uid);
         try {

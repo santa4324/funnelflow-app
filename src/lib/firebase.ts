@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -13,21 +13,18 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Check if all required environment variables are set
-if (
-  !firebaseConfig.apiKey ||
-  !firebaseConfig.authDomain ||
-  !firebaseConfig.projectId ||
-  !firebaseConfig.storageBucket ||
-  !firebaseConfig.messagingSenderId ||
-  !firebaseConfig.appId
-) {
+let app: FirebaseApp | undefined;
+
+// Check if Firebase config values are present and not placeholders
+const isFirebaseConfigured = !!(firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("YOUR_"));
+
+if (isFirebaseConfigured) {
+  // Initialize Firebase
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+} else {
   // This will log a more helpful error on the server and in the browser console.
-  console.error("Firebase configuration is missing. Make sure all NEXT_PUBLIC_FIREBASE_ environment variables are set correctly in your .env file.");
+  console.error("Firebase configuration is missing or contains placeholder values. Please update your .env file. Auth and database features will be disabled.");
 }
 
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-
-export { app };
+export { app, isFirebaseConfigured };

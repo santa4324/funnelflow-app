@@ -11,9 +11,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   User,
+  type Auth,
 } from 'firebase/auth';
-import { getFirestore, doc, setDoc, onSnapshot } from 'firebase/firestore';
-import { app } from '@/lib/firebase';
+import { getFirestore, doc, setDoc, onSnapshot, type Firestore } from 'firebase/firestore';
+import { app, isFirebaseConfigured } from '@/lib/firebase';
 
 // Type for our custom user data stored in Firestore
 interface AppUser {
@@ -41,11 +42,9 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
 // Helper function to create user document in Firestore
-const createUserDocument = async (user: User) => {
+const createUserDocument = async (db: Firestore, user: User) => {
     const userRef = doc(db, 'users', user.uid);
     // Check if document already exists to avoid overwriting subscription data on re-login
     await setDoc(userRef, {
@@ -63,54 +62,71 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [appUser, setAppUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [services, setServices] = useState<{auth: Auth; db: Firestore} | null>(null);
 
   useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
-      if (authUser) {
-        setUser(authUser);
-        const userRef = doc(db, 'users', authUser.uid);
-        const unsubscribeSnapshot = onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            setAppUser(docSnap.data() as AppUser);
-          } else {
-            // If the doc doesn't exist, create it. This can happen for users who signed up before this logic was in place.
-            createUserDocument(authUser);
-          }
-          setLoading(false);
-        });
-        return () => unsubscribeSnapshot();
-      } else {
-        setUser(null);
-        setAppUser(null);
-        setLoading(false);
-      }
-    });
+    if (isFirebaseConfigured && app) {
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      setServices({ auth, db });
 
-    return () => unsubscribeAuth();
+      const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
+        if (authUser) {
+          setUser(authUser);
+          const userRef = doc(db, 'users', authUser.uid);
+          const unsubscribeSnapshot = onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+              setAppUser(docSnap.data() as AppUser);
+            } else {
+              // If the doc doesn't exist, create it. This can happen for users who signed up before this logic was in place.
+              createUserDocument(db, authUser);
+            }
+            setLoading(false);
+          });
+          return () => unsubscribeSnapshot();
+        } else {
+          setUser(null);
+          setAppUser(null);
+          setLoading(false);
+        }
+      });
+
+      return () => unsubscribeAuth();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
+  const throwConfigError = () => {
+    throw new Error('Firebase is not configured. Please add your credentials to the .env file.');
+  };
+
   const emailSignUp = async (email: string, pass: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-    await createUserDocument(userCredential.user);
+    if (!services) return throwConfigError();
+    const userCredential = await createUserWithEmailAndPassword(services.auth, email, pass);
+    await createUserDocument(services.db, userCredential.user);
     return userCredential;
   };
   
   const emailSignIn = async (email: string, pass: string) => {
-    return signInWithEmailAndPassword(auth, email, pass);
+    if (!services) return throwConfigError();
+    return signInWithEmailAndPassword(services.auth, email, pass);
   };
   
   const googleSignIn = async () => {
+      if (!services) return throwConfigError();
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({
         prompt: 'select_account',
       });
-      const userCredential = await signInWithPopup(auth, provider);
-      await createUserDocument(userCredential.user);
+      const userCredential = await signInWithPopup(services.auth, provider);
+      await createUserDocument(services.db, userCredential.user);
       return userCredential;
   };
 
   const logout = () => {
-    signOut(auth).then(() => {
+    if (!services) return;
+    signOut(services.auth).then(() => {
       router.push('/');
     });
   };
