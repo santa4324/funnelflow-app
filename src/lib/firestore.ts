@@ -1,5 +1,5 @@
 import { app, isFirebaseConfigured } from '@/lib/firebase';
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp, where, type Firestore } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp, where, type Firestore, setDoc } from 'firebase/firestore';
 import type { BusinessInfo, Funnel, GenerateFunnelContentOutput, PublicFunnel, Lead } from '@/lib/types';
 import { format } from 'date-fns';
 
@@ -32,9 +32,13 @@ export async function saveFunnel(
     
     const docRef = await addDoc(funnelsCollectionRef, funnelData);
 
-    // Create a public index for the funnel
+    // Create a public index for the funnel using the same ID for direct lookup
     const funnelIndexRef = doc(db, 'funnelIndex', docRef.id);
-    await addDoc(collection(db, 'funnelIndex'), { funnelId: docRef.id, userId: userId, ...funnelData});
+    await setDoc(funnelIndexRef, {
+      name: funnelName,
+      userId: userId,
+      generatedContent,
+    });
 
     return docRef.id;
 }
@@ -81,19 +85,18 @@ export async function getFunnel(userId: string, funnelId: string): Promise<Funne
 
 export async function getPublicFunnel(funnelId: string): Promise<PublicFunnel | null> {
     const db = ensureDb();
-    const funnelIndexQuery = query(collection(db, "funnelIndex"), where("funnelId", "==", funnelId));
-    const querySnapshot = await getDocs(funnelIndexQuery);
+    const funnelDocRef = doc(db, 'funnelIndex', funnelId);
+    const docSnap = await getDoc(funnelDocRef);
     
-    if (querySnapshot.empty) {
-        console.log("No matching funnel found in index.");
+    if (!docSnap.exists()) {
+        console.log("No matching public funnel found in index.");
         return null;
     }
     
-    const funnelIndexDoc = querySnapshot.docs[0];
-    const data = funnelIndexDoc.data();
+    const data = docSnap.data();
 
     return {
-        id: funnelIndexDoc.data().funnelId,
+        id: docSnap.id,
         name: data.name,
         userId: data.userId,
         generatedContent: data.generatedContent,
@@ -102,9 +105,23 @@ export async function getPublicFunnel(funnelId: string): Promise<PublicFunnel | 
 
 export async function saveLead(userId: string, funnelId: string, name: string, email: string): Promise<void> {
     const db = ensureDb();
+    // We get the funnel from the private collection to ensure we have the correct name.
     const funnel = await getFunnel(userId, funnelId);
     if (!funnel) {
-        throw new Error("Funnel not found");
+        // Fallback to public funnel data if private one not found (should be rare)
+        const publicFunnel = await getPublicFunnel(funnelId);
+         if (!publicFunnel) {
+            throw new Error("Funnel not found");
+         }
+         const leadsCollectionRef = collection(db, 'users', userId, 'leads');
+         await addDoc(leadsCollectionRef, {
+            name,
+            email,
+            funnelId,
+            funnelName: publicFunnel.name,
+            collectedAt: Timestamp.fromDate(new Date()),
+        });
+        return;
     }
 
     const leadsCollectionRef = collection(db, 'users', userId, 'leads');
