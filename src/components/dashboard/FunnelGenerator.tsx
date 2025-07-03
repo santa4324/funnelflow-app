@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { generateFunnelContent } from '@/ai/flows/generate-funnel-content';
 import { saveFunnel } from '@/lib/firestore';
 import type { GenerateFunnelContentOutput } from '@/ai/flows/generate-funnel-content';
 import type { BusinessInfo } from '@/lib/types';
-import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save } from 'lucide-react';
+import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -23,9 +23,16 @@ type FunnelGeneratorProps = {
 export function FunnelGenerator({ businessInfo, onContentGenerated, generatedContent }: FunnelGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (generatedContent) {
+      setIsSaved(false);
+    }
+  }, [generatedContent]);
 
   const handleGenerateClick = async () => {
     if (!businessInfo) {
@@ -62,8 +69,7 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
   };
 
   const handleSaveFunnel = async () => {
-    if (!user || !businessInfo || !generatedContent) {
-      toast({ variant: 'destructive', title: 'Error', description: 'Missing required information to save.' });
+    if (!user || !businessInfo || !generatedContent || isSaved) {
       return;
     }
     
@@ -71,6 +77,7 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
     
     try {
       const newFunnelId = await saveFunnel(user.uid, businessInfo, generatedContent);
+      setIsSaved(true);
       toast({
         title: 'Funnel Saved Successfully!',
         description: 'Redirecting to your new funnel...',
@@ -83,7 +90,7 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
         title: 'Operation Failed',
         description: 'Could not save the funnel. Please try again.',
       });
-      // This is crucial: ensure we stop the loading spinner on any failure.
+    } finally {
       setIsSaving(false);
     }
   };
@@ -142,9 +149,9 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
             <h3 className="text-2xl font-headline font-semibold text-center mb-4">Your Generated Funnel</h3>
             
             <div className="mt-6 text-center">
-                <Button onClick={handleSaveFunnel} disabled={isSaving} className="gap-2">
-                  {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                  Save Funnel
+                <Button onClick={handleSaveFunnel} disabled={isSaving || isSaved} className="gap-2">
+                  {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : (isSaved ? <Check className="h-5 w-5" /> : <Save className="h-5 w-5" />)}
+                  {isSaving ? 'Saving...' : (isSaved ? 'Saved!' : 'Save Funnel')}
                 </Button>
             </div>
 
