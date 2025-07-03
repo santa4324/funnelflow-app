@@ -17,7 +17,7 @@ import { Bot, LayoutDashboard, Settings, LogOut, VenetianMask, BarChart, Users, 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
@@ -28,6 +28,7 @@ export default function DashboardLayout({
 }) {
   const { user, appUser, logout, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   React.useEffect(() => {
     if (!loading && !user) {
@@ -57,6 +58,18 @@ export default function DashboardLayout({
     );
   }
 
+  const pageTitles: { [key: string]: string } = {
+    '/dashboard': 'Dashboard',
+    '/dashboard/funnels': 'My Funnels',
+    '/dashboard/leads': 'Leads CRM',
+    '/dashboard/analytics': 'Analytics',
+    '/dashboard/agency': 'Agency Mode',
+    '/dashboard/help': 'Help & Support',
+    '/dashboard/settings': 'Settings',
+  };
+  
+  const pageTitle = pageTitles[pathname] || 'Dashboard';
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -69,31 +82,31 @@ export default function DashboardLayout({
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" isActive tooltip="Dashboard">
+              <SidebarMenuButton href="/dashboard" isActive={pathname === '/dashboard'} tooltip="Dashboard">
                 <LayoutDashboard />
                 Dashboard
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Funnels">
+              <SidebarMenuButton href="/dashboard/funnels" isActive={pathname.startsWith('/dashboard/funnels')} tooltip="Funnels">
                 <FileText />
                 My Funnels
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Leads">
+              <SidebarMenuButton href="/dashboard/leads" isActive={pathname.startsWith('/dashboard/leads')} tooltip="Leads">
                 <Users />
                 Leads CRM
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Analytics">
+              <SidebarMenuButton href="/dashboard/analytics" isActive={pathname.startsWith('/dashboard/analytics')} tooltip="Analytics">
                 <BarChart />
                 Analytics
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#" tooltip="Agency">
+              <SidebarMenuButton href="/dashboard/agency" isActive={pathname.startsWith('/dashboard/agency')} tooltip="Agency">
                  <VenetianMask />
                 Agency Mode
               </SidebarMenuButton>
@@ -103,13 +116,13 @@ export default function DashboardLayout({
         <SidebarFooter>
            <SidebarMenu>
              <SidebarMenuItem>
-                <SidebarMenuButton href="#" tooltip="Help">
+                <SidebarMenuButton href="/dashboard/help" isActive={pathname.startsWith('/dashboard/help')} tooltip="Help">
                   <LifeBuoy />
                   Help & Support
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton href="#" tooltip="Settings">
+                <SidebarMenuButton href="/dashboard/settings" isActive={pathname.startsWith('/dashboard/settings')} tooltip="Settings">
                   <Settings />
                   Settings
                 </SidebarMenuButton>
@@ -139,7 +152,7 @@ export default function DashboardLayout({
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-6">
             <SidebarTrigger className="md:hidden" />
             <div className='flex-1'>
-                <h1 className="text-lg font-semibold md:text-xl font-headline">Dashboard</h1>
+                <h1 className="text-lg font-semibold md:text-xl font-headline">{pageTitle}</h1>
             </div>
              {appUser?.subscription?.planName && (
               <Badge variant="outline" className="hidden sm:inline-flex border-primary text-primary">
