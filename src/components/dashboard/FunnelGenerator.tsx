@@ -129,27 +129,32 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
             </Button>
         </div>
 
-        {generatedContent && (
+        {isLoading && (
+            <div className="text-center space-y-2">
+                <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground">Generating your content... this may take a moment.</p>
+            </div>
+        )}
+
+        {generatedContent && !isLoading && (
           <div className="pt-6">
             <h3 className="text-2xl font-headline font-semibold text-center mb-4">Your Generated Funnel</h3>
             
-            {generatedContent && (
-              <div className="mt-6 text-center">
-                {!savedFunnelId ? (
-                  <Button onClick={handleSaveFunnel} disabled={isSaving} className="gap-2">
-                    {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                    Save Funnel
-                  </Button>
-                ) : (
-                  <Button asChild>
-                    <Link href={`/dashboard/funnels/${savedFunnelId}`} className="gap-2">
-                      <CheckCircle className="h-5 w-5" />
-                      Funnel Saved! View Details
-                    </Link>
-                  </Button>
-                )}
-              </div>
-            )}
+            <div className="mt-6 text-center">
+              {!savedFunnelId ? (
+                <Button onClick={handleSaveFunnel} disabled={isSaving} className="gap-2">
+                  {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                  Save Funnel
+                </Button>
+              ) : (
+                <Button asChild>
+                  <Link href={`/dashboard/funnels/${savedFunnelId}`} className="gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    Funnel Saved! View Details
+                  </Link>
+                </Button>
+              )}
+            </div>
 
             <Accordion type="single" collapsible className="w-full mt-6" defaultValue="landing-page">
               <AccordionItem value="landing-page">
