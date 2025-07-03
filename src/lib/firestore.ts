@@ -1,5 +1,5 @@
 import { app } from '@/lib/firebase';
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp } from 'firebase/firestore';
 import type { BusinessInfo, Funnel, GenerateFunnelContentOutput } from '@/lib/types';
 import { format } from 'date-fns';
 
@@ -16,7 +16,7 @@ export async function saveFunnel(
         name: funnelName,
         businessInfo,
         generatedContent,
-        createdAt: new Date(),
+        createdAt: Timestamp.fromDate(new Date()),
     });
     return docRef.id;
 }

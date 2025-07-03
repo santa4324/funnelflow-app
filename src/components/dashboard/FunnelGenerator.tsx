@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -9,7 +9,7 @@ import { generateFunnelContent } from '@/ai/flows/generate-funnel-content';
 import { saveFunnel } from '@/lib/firestore';
 import type { GenerateFunnelContentOutput } from '@/ai/flows/generate-funnel-content';
 import type { BusinessInfo } from '@/lib/types';
-import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save, CheckCircle } from 'lucide-react';
+import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -23,13 +23,9 @@ type FunnelGeneratorProps = {
 export function FunnelGenerator({ businessInfo, onContentGenerated, generatedContent }: FunnelGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [savedFunnelId, setSavedFunnelId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
-
-  useEffect(() => {
-    setSavedFunnelId(null);
-  }, [generatedContent]);
+  const router = useRouter();
 
   const handleGenerateClick = async () => {
     if (!businessInfo) {
@@ -42,7 +38,6 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
     }
 
     setIsLoading(true);
-    setSavedFunnelId(null); // Reset save state on new generation
     try {
       const content = await generateFunnelContent({
         ...businessInfo,
@@ -74,17 +69,17 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
     setIsSaving(true);
     try {
       const newFunnelId = await saveFunnel(user.uid, businessInfo, generatedContent);
-      setSavedFunnelId(newFunnelId);
       toast({
         title: 'Funnel Saved Successfully!',
-        description: 'You can now view it in the "My Funnels" section.',
+        description: 'Redirecting to your new funnel...',
       });
+      router.push(`/dashboard/funnels/${newFunnelId}`);
     } catch (error) {
       console.error('Error saving funnel:', error);
       toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save the funnel. Please try again.' });
-    } finally {
       setIsSaving(false);
     }
+    // No need to set isSaving to false in the success case because we are navigating away.
   };
 
   if (!businessInfo) {
@@ -141,19 +136,10 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
             <h3 className="text-2xl font-headline font-semibold text-center mb-4">Your Generated Funnel</h3>
             
             <div className="mt-6 text-center">
-              {!savedFunnelId ? (
                 <Button onClick={handleSaveFunnel} disabled={isSaving} className="gap-2">
                   {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                   Save Funnel
                 </Button>
-              ) : (
-                <Button asChild>
-                  <Link href={`/dashboard/funnels/${savedFunnelId}`} className="gap-2">
-                    <CheckCircle className="h-5 w-5" />
-                    Funnel Saved! View Details
-                  </Link>
-                </Button>
-              )}
             </div>
 
             <Accordion type="single" collapsible className="w-full mt-6" defaultValue="landing-page">
