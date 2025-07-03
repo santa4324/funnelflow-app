@@ -1,7 +1,16 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    // This is required for the cloud environment and Turbopack.
+    allowedDevOrigins: ['https://*.cloudworkstations.dev'],
+    turbopack: {
+      resolveAlias: {
+        // This prevents the 'async_hooks' module from being bundled on the client.
+        'async_hooks': false,
+      },
+    },
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -24,6 +33,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // This is the fallback for Webpack (used in production builds).
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
