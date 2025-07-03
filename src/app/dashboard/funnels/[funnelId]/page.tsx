@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
-import { ArrowLeft, FileText, Mail, PartyPopper } from 'lucide-react';
+import { ArrowLeft, FileText, Mail, PartyPopper, MessageSquareQuote } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function FunnelDetailPage() {
@@ -87,6 +87,14 @@ export default function FunnelDetailPage() {
               <AccordionTrigger className="text-lg font-semibold"><FileText className="h-5 w-5 mr-2 text-primary" /> Landing Page Copy</AccordionTrigger>
               <AccordionContent className="prose max-w-none p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-body">
                 {funnel.generatedContent.landingPageCopy}
+              </AccordionContent>
+            </AccordionItem>
+             <AccordionItem value="lead-capture-form">
+              <AccordionTrigger className="text-lg font-semibold"><MessageSquareQuote className="h-5 w-5 mr-2 text-primary" /> Lead Capture Form Content</AccordionTrigger>
+              <AccordionContent className="prose max-w-none p-4 bg-muted/50 rounded-md font-body space-y-2">
+                  <p><strong>Headline:</strong> {funnel.generatedContent.leadCaptureForm.headline}</p>
+                  <p><strong>Call to Action:</strong> {funnel.generatedContent.leadCaptureForm.callToAction}</p>
+                  <p><strong>Button Text:</strong> {funnel.generatedContent.leadCaptureForm.buttonText}</p>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="email-sequence">

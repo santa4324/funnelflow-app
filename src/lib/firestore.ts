@@ -1,6 +1,6 @@
 import { app, isFirebaseConfigured } from '@/lib/firebase';
-import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp, type Firestore } from 'firebase/firestore';
-import type { BusinessInfo, Funnel, GenerateFunnelContentOutput } from '@/lib/types';
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp, where, type Firestore } from 'firebase/firestore';
+import type { BusinessInfo, Funnel, GenerateFunnelContentOutput, PublicFunnel, Lead } from '@/lib/types';
 import { format } from 'date-fns';
 
 const db: Firestore | undefined = isFirebaseConfigured && app ? getFirestore(app) : undefined;
@@ -21,12 +21,21 @@ export async function saveFunnel(
     const db = ensureDb();
     const funnelName = `${businessInfo.businessName} - ${format(new Date(), 'MM/dd/yyyy')}`;
     const funnelsCollectionRef = collection(db, 'users', userId, 'funnels');
-    const docRef = await addDoc(funnelsCollectionRef, {
+    
+    const funnelData = {
         name: funnelName,
+        userId: userId,
         businessInfo,
         generatedContent,
         createdAt: Timestamp.fromDate(new Date()),
-    });
+    };
+    
+    const docRef = await addDoc(funnelsCollectionRef, funnelData);
+
+    // Create a public index for the funnel
+    const funnelIndexRef = doc(db, 'funnelIndex', docRef.id);
+    await addDoc(collection(db, 'funnelIndex'), { funnelId: docRef.id, userId: userId, ...funnelData});
+
     return docRef.id;
 }
 
@@ -41,9 +50,9 @@ export async function getFunnels(userId: string): Promise<Funnel[]> {
         return {
             id: doc.id,
             name: data.name,
+            userId: data.userId,
             businessInfo: data.businessInfo,
             generatedContent: data.generatedContent,
-            // Convert Firestore timestamp to JS Date
             createdAt: data.createdAt.toDate(),
         } as Funnel
     });
@@ -60,6 +69,7 @@ export async function getFunnel(userId: string, funnelId: string): Promise<Funne
         return {
             id: docSnap.id,
             name: data.name,
+            userId: data.userId,
             businessInfo: data.businessInfo,
             generatedContent: data.generatedContent,
             createdAt: data.createdAt.toDate(),
@@ -67,4 +77,61 @@ export async function getFunnel(userId: string, funnelId: string): Promise<Funne
     } else {
         return null;
     }
+}
+
+export async function getPublicFunnel(funnelId: string): Promise<PublicFunnel | null> {
+    const db = ensureDb();
+    const funnelIndexQuery = query(collection(db, "funnelIndex"), where("funnelId", "==", funnelId));
+    const querySnapshot = await getDocs(funnelIndexQuery);
+    
+    if (querySnapshot.empty) {
+        console.log("No matching funnel found in index.");
+        return null;
+    }
+    
+    const funnelIndexDoc = querySnapshot.docs[0];
+    const data = funnelIndexDoc.data();
+
+    return {
+        id: funnelIndexDoc.data().funnelId,
+        name: data.name,
+        userId: data.userId,
+        generatedContent: data.generatedContent,
+    };
+}
+
+export async function saveLead(userId: string, funnelId: string, name: string, email: string): Promise<void> {
+    const db = ensureDb();
+    const funnel = await getFunnel(userId, funnelId);
+    if (!funnel) {
+        throw new Error("Funnel not found");
+    }
+
+    const leadsCollectionRef = collection(db, 'users', userId, 'leads');
+    await addDoc(leadsCollectionRef, {
+        name,
+        email,
+        funnelId,
+        funnelName: funnel.name,
+        collectedAt: Timestamp.fromDate(new Date()),
+    });
+}
+
+export async function getLeads(userId: string): Promise<Lead[]> {
+    const db = ensureDb();
+    const leadsCollectionRef = collection(db, 'users', userId, 'leads');
+    const q = query(leadsCollectionRef, orderBy('collectedAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            name: data.name,
+            email: data.email,
+            funnelId: data.funnelId,
+            funnelName: data.funnelName,
+            collectedAt: data.collectedAt.toDate(),
+        } as Lead;
+    });
 }

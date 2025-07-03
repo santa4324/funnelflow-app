@@ -9,12 +9,14 @@ import type { Funnel } from '@/lib/types';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
-import { FilePlus, Eye } from 'lucide-react';
+import { FilePlus, Eye, Share2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function FunnelsPage() {
   const { user } = useAuth();
   const [funnels, setFunnels] = useState<Funnel[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
@@ -23,6 +25,15 @@ export default function FunnelsPage() {
         .finally(() => setLoading(false));
     }
   }, [user]);
+
+  const handleShare = (funnelId: string) => {
+    const url = `${window.location.origin}/v/${funnelId}`;
+    navigator.clipboard.writeText(url);
+    toast({
+      title: 'Link Copied!',
+      description: 'The public URL for your funnel has been copied to your clipboard.',
+    });
+  };
 
   if (loading) {
     return (
@@ -79,9 +90,12 @@ export default function FunnelsPage() {
                   For a <span className="font-semibold text-foreground">{funnel.businessInfo.industry}</span> business targeting <span className="font-semibold text-foreground">{funnel.businessInfo.targetAudience}</span>.
                 </p>
               </CardContent>
-              <CardFooter>
-                <Button asChild className="w-full">
+              <CardFooter className="grid grid-cols-2 gap-2">
+                <Button asChild variant="outline">
                   <Link href={`/dashboard/funnels/${funnel.id}`} className='gap-2'><Eye/> View Details</Link>
+                </Button>
+                 <Button onClick={() => handleShare(funnel.id)} className='gap-2'>
+                  <Share2 /> Share
                 </Button>
               </CardFooter>
             </Card>

@@ -9,7 +9,7 @@ import { generateFunnelContent } from '@/ai/flows/generate-funnel-content';
 import { saveFunnel } from '@/lib/firestore';
 import type { GenerateFunnelContentOutput } from '@/ai/flows/generate-funnel-content';
 import type { BusinessInfo } from '@/lib/types';
-import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save, Check } from 'lucide-react';
+import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save, Check, MessageSquareQuote } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -90,8 +90,7 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
         title: 'Operation Failed',
         description: 'Could not save the funnel. Please try again.',
       });
-    } finally {
-      setIsSaving(false);
+       setIsSaving(false);
     }
   };
 
@@ -151,7 +150,7 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
             <div className="mt-6 text-center">
                 <Button onClick={handleSaveFunnel} disabled={isSaving || isSaved} className="gap-2">
                   {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : (isSaved ? <Check className="h-5 w-5" /> : <Save className="h-5 w-5" />)}
-                  {isSaving ? 'Saving...' : (isSaved ? 'Saved!' : 'Save Funnel')}
+                  {isSaving ? 'Saving...' : (isSaved ? 'Saved!' : 'Save & View Funnel')}
                 </Button>
             </div>
 
@@ -160,6 +159,14 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
                 <AccordionTrigger className="text-lg font-semibold"><FileText className="h-5 w-5 mr-2 text-primary" /> Landing Page Copy</AccordionTrigger>
                 <AccordionContent className="prose max-w-none p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-body">
                   {generatedContent.landingPageCopy}
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="lead-capture-form">
+                <AccordionTrigger className="text-lg font-semibold"><MessageSquareQuote className="h-5 w-5 mr-2 text-primary" /> Lead Capture Form Content</AccordionTrigger>
+                 <AccordionContent className="prose max-w-none p-4 bg-muted/50 rounded-md font-body space-y-2">
+                  <p><strong>Headline:</strong> {generatedContent.leadCaptureForm.headline}</p>
+                  <p><strong>Call to Action:</strong> {generatedContent.leadCaptureForm.callToAction}</p>
+                  <p><strong>Button Text:</strong> {generatedContent.leadCaptureForm.buttonText}</p>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="email-sequence">

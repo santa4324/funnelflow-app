@@ -12,15 +12,24 @@ export interface BusinessInfo {
 export interface Funnel {
     id: string;
     name: string;
+    userId: string;
     businessInfo: BusinessInfo;
     generatedContent: GenerateFunnelContentOutput;
     createdAt: Date;
+}
+
+export interface PublicFunnel {
+    name: string;
+    generatedContent: GenerateFunnelContentOutput;
+    userId: string;
+    id: string;
 }
 
 export interface Lead {
     id: string;
     name: string;
     email: string;
+    funnelId: string;
     funnelName: string;
     collectedAt: Date;
 }

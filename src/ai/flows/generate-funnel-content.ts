@@ -29,15 +29,21 @@ const EmailSchema = z.object({
   body: z.string().describe('The body content for the email.'),
 });
 
+const LeadCaptureFormSchema = z.object({
+    headline: z.string().describe('A compelling headline for the lead capture form section.'),
+    callToAction: z.string().describe('A short sentence encouraging the user to sign up.'),
+    buttonText: z.string().describe('The text for the submission button (e.g., "Get Access Now").'),
+});
+
 const GenerateFunnelContentOutputSchema = z.object({
-  landingPageCopy: z.string().describe('The generated landing page copy.'),
-  leadCaptureForm: z.string().describe('The generated lead capture form.'),
+  landingPageCopy: z.string().describe('The generated landing page copy in Markdown format.'),
+  leadCaptureForm: LeadCaptureFormSchema.describe('The generated content for the lead capture form.'),
   emailSequence: z
     .array(EmailSchema)
     .describe(
       'The generated email follow-up sequence (3-5 emails), each with a subject and body.'
     ),
-  thankYouPage: z.string().describe('The generated thank you page content.'),
+  thankYouPage: z.string().describe('The generated thank you page content in Markdown format.'),
 });
 export type GenerateFunnelContentOutput = z.infer<typeof GenerateFunnelContentOutputSchema>;
 
@@ -49,7 +55,7 @@ const generateFunnelContentPrompt = ai.definePrompt({
   name: 'generateFunnelContentPrompt',
   input: {schema: GenerateFunnelContentInputSchema},
   output: {schema: GenerateFunnelContentOutputSchema},
-  prompt: `You are an expert marketing funnel generator. Given the following business details, generate compelling landing page copy, a lead capture form, a 3-email follow-up sequence, and thank you page content to capture leads and convert them into customers.
+  prompt: `You are an expert marketing funnel generator. Given the following business details, generate compelling landing page copy, content for a lead capture form, a 3-email follow-up sequence, and thank you page content to capture leads and convert them into customers.
 
 Business Name: {{{businessName}}}
 Industry: {{{industry}}}
@@ -60,10 +66,10 @@ Social URLs: {{{socialUrls}}}
 
 
 Instructions:
-1.  Landing Page Copy: Create persuasive and engaging copy that highlights the benefits of the offer and encourages visitors to sign up.
-2.  Lead Capture Form: Design a simple form to collect name and email address. Ensure it is concise and user-friendly.
+1.  Landing Page Copy: Create persuasive and engaging copy in Markdown format that highlights the benefits of the offer and encourages visitors to sign up.
+2.  Lead Capture Form: Generate content for the lead capture form. Create a compelling headline, a short call-to-action sentence, and text for the submit button.
 3.  Email Follow-up Sequence: Write 3-5 emails to nurture leads. For each email, provide a distinct subject line and body. The first email should deliver the promised offer. Subsequent emails should build trust, provide value, and promote the core product/service.
-4.  Thank You Page: Craft a thank you page that confirms the user's subscription and provides clear next steps.
+4.  Thank You Page: Craft a thank you page in Markdown format that confirms the user's subscription and provides clear next steps.
 
 Ensure the output is a valid JSON object matching the provided schema.
 `,
