@@ -19,13 +19,14 @@ import { useAuth } from '@/context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, logout, loading } = useAuth();
+  const { user, appUser, logout, loading } = useAuth();
   const router = useRouter();
 
   React.useEffect(() => {
@@ -140,6 +141,11 @@ export default function DashboardLayout({
             <div className='flex-1'>
                 <h1 className="text-lg font-semibold md:text-xl font-headline">Dashboard</h1>
             </div>
+             {appUser?.subscription?.planName && (
+              <Badge variant="outline" className="hidden sm:inline-flex border-primary text-primary">
+                  {appUser.subscription.planName} Plan
+              </Badge>
+            )}
         </header>
         {children}
       </SidebarInset>
