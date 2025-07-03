@@ -40,21 +40,53 @@ export default function DashboardLayout({
   if (loading || !user) {
     return (
        <div className="flex min-h-screen">
-          <div className="hidden md:flex flex-col w-64 border-r p-4 gap-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <div className="mt-auto">
-                <Skeleton className="h-8 w-full mt-4" />
-                <Skeleton className="h-10 w-full mt-2" />
-              </div>
+        <div className="hidden md:flex flex-col w-64 border-r p-2">
+          {/* Header */}
+          <div className="p-2">
+            <div className="flex items-center gap-2 h-10 px-2">
+              <Skeleton className="h-6 w-6" />
+              <Skeleton className="h-5 w-24" />
+            </div>
           </div>
-          <div className="flex-1 p-6">
-              <Skeleton className="h-12 w-1/3 mb-6" />
-              <Skeleton className="w-full h-[400px]" />
+          {/* Menu */}
+          <div className="flex-1 px-2 py-2">
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+          </div>
+          {/* Footer */}
+          <div className="mt-auto p-2">
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <div className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm mt-2">
+                  <Skeleton className="h-7 w-7 rounded-full" />
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-3 w-32" />
+                  </div>
+              </div>
+              <Skeleton className="h-8 w-full" />
+            </div>
           </div>
         </div>
+        <div className="flex-1 flex flex-col">
+          <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-6">
+              <Skeleton className="h-6 w-6 md:hidden" />
+              <div className='flex-1'>
+                  <Skeleton className="h-6 w-32" />
+              </div>
+              <Skeleton className="h-7 w-28 hidden sm:inline-flex rounded-full" />
+          </header>
+          <main className="flex-1 p-4 md:p-6">
+              <Skeleton className="w-full h-[calc(100vh-12rem)]" />
+          </main>
+        </div>
+      </div>
     );
   }
 
