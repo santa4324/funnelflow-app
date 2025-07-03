@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { generateFunnelContent } from '@/ai/flows/generate-funnel-content';
+import { saveFunnel } from '@/lib/firestore';
 import type { GenerateFunnelContentOutput } from '@/ai/flows/generate-funnel-content';
 import type { BusinessInfo } from '@/lib/types';
-import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle } from 'lucide-react';
+import { Bot, Loader2, FileText, Mail, PartyPopper, AlertCircle, Save, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type FunnelGeneratorProps = {
@@ -19,7 +22,14 @@ type FunnelGeneratorProps = {
 
 export function FunnelGenerator({ businessInfo, onContentGenerated, generatedContent }: FunnelGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedFunnelId, setSavedFunnelId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    setSavedFunnelId(null);
+  }, [generatedContent]);
 
   const handleGenerateClick = async () => {
     if (!businessInfo) {
@@ -32,6 +42,7 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
     }
 
     setIsLoading(true);
+    setSavedFunnelId(null); // Reset save state on new generation
     try {
       const content = await generateFunnelContent({
         ...businessInfo,
@@ -52,6 +63,27 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSaveFunnel = async () => {
+    if (!user || !businessInfo || !generatedContent) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Missing required information to save.' });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const newFunnelId = await saveFunnel(user.uid, businessInfo, generatedContent);
+      setSavedFunnelId(newFunnelId);
+      toast({
+        title: 'Funnel Saved Successfully!',
+        description: 'You can now view it in the "My Funnels" section.',
+      });
+    } catch (error) {
+      console.error('Error saving funnel:', error);
+      toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save the funnel. Please try again.' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -100,7 +132,26 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
         {generatedContent && (
           <div className="pt-6">
             <h3 className="text-2xl font-headline font-semibold text-center mb-4">Your Generated Funnel</h3>
-            <Accordion type="single" collapsible className="w-full" defaultValue="landing-page">
+            
+            {generatedContent && (
+              <div className="mt-6 text-center">
+                {!savedFunnelId ? (
+                  <Button onClick={handleSaveFunnel} disabled={isSaving} className="gap-2">
+                    {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                    Save Funnel
+                  </Button>
+                ) : (
+                  <Button asChild>
+                    <Link href={`/dashboard/funnels/${savedFunnelId}`} className="gap-2">
+                      <CheckCircle className="h-5 w-5" />
+                      Funnel Saved! View Details
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            )}
+
+            <Accordion type="single" collapsible className="w-full mt-6" defaultValue="landing-page">
               <AccordionItem value="landing-page">
                 <AccordionTrigger className="text-lg font-semibold"><FileText className="h-5 w-5 mr-2 text-primary" /> Landing Page Copy</AccordionTrigger>
                 <AccordionContent className="prose max-w-none p-4 bg-muted/50 rounded-md whitespace-pre-wrap font-body">
@@ -115,6 +166,8 @@ export function FunnelGenerator({ businessInfo, onContentGenerated, generatedCon
                              <AccordionItem key={index} value={`email-${index}`} className="border rounded-md px-4">
                                 <AccordionTrigger>Email #{index + 1}: {email.subject}</AccordionTrigger>
                                 <AccordionContent className="prose max-w-none p-2 bg-muted/30 rounded-md whitespace-pre-wrap font-body">
+                                    <p className="font-semibold">Subject: {email.subject}</p>
+                                    <hr className="my-2"/>
                                     {email.body}
                                 </AccordionContent>
                              </AccordionItem>
