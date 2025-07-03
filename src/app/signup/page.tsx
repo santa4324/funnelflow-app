@@ -44,10 +44,16 @@ export default function SignupPage() {
       });
       router.push('/pricing');
     } catch (error: any) {
+      let description = error.message;
+      if (error.code === 'auth/email-already-in-use') {
+        description = 'This email is already in use. Please login or use a different email.';
+      } else if (error.code === 'auth/configuration-not-found') {
+        description = 'Sign-in method not enabled. Please enable Email/Password Sign-In in your Firebase project console.';
+      }
       toast({
         variant: 'destructive',
         title: 'Signup Failed',
-        description: error.message,
+        description: description,
       });
     } finally {
       setIsLoading(false);
@@ -64,10 +70,14 @@ export default function SignupPage() {
       });
       router.push('/pricing');
     } catch (error: any) {
+      let description = error.message;
+      if (error.code === 'auth/configuration-not-found') {
+        description = 'Sign-in method not enabled. Please enable Google Sign-In in your Firebase project console.';
+      }
       toast({
         variant: 'destructive',
         title: 'Sign-in Failed',
-        description: error.message,
+        description: description,
       });
     } finally {
       setIsLoading(false);

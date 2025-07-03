@@ -44,10 +44,14 @@ export default function LoginPage() {
       });
       router.push('/dashboard');
     } catch (error: any) {
+      let description = error.message;
+      if (error.code === 'auth/invalid-credential') {
+        description = 'Invalid email or password. Please try again.';
+      }
        toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: error.message,
+        description: description,
       });
     } finally {
       setIsLoading(false);
@@ -64,10 +68,14 @@ export default function LoginPage() {
       });
       router.push('/dashboard');
     } catch (error: any) {
+      let description = error.message;
+      if (error.code === 'auth/configuration-not-found') {
+        description = 'Sign-in method not enabled. Please enable Google Sign-In in your Firebase project console.';
+      }
       toast({
         variant: 'destructive',
         title: 'Login Failed',
-        description: error.message,
+        description: description,
       });
     } finally {
       setIsLoading(false);
