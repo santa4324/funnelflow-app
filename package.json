@@ -1,7 +1,8 @@
 {
-  "name": "nextn",
-  "version": "0.1.0",
+  "name": "funnelflow",
+  "version": "1.0.0",
   "private": true,
+  "description": "FunnelFlow: Generate marketing funnels with AI.",
   "engines": {
     "node": "20"
   },
