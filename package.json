@@ -1,17 +1,9 @@
 {
   "name": "funnelflow",
   "version": "1.0.0",
-  "private": true,
-  "description": "FunnelFlow: Generate marketing funnels with AI.",
-  "engines": {
-    "node": "20"
-  },
   "scripts": {
-    "dev": "next dev -p 9002",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
