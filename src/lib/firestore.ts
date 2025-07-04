@@ -1,7 +1,6 @@
 import { app, isFirebaseConfigured } from '@/lib/firebase';
 import { getFirestore, collection, addDoc, getDocs, doc, getDoc, query, orderBy, Timestamp, where, type Firestore, setDoc } from 'firebase/firestore';
 import type { BusinessInfo, Funnel, GenerateFunnelContentOutput, PublicFunnel, Lead } from '@/lib/types';
-import { format } from 'date-fns';
 
 const db: Firestore | undefined = isFirebaseConfigured && app ? getFirestore(app) : undefined;
 
@@ -19,7 +18,7 @@ export async function saveFunnel(
     generatedContent: GenerateFunnelContentOutput
 ): Promise<string> {
     const db = ensureDb();
-    const funnelName = `${businessInfo.businessName} - ${format(new Date(), 'MM/dd/yyyy')}`;
+    const funnelName = `${businessInfo.businessName} - ${new Date().toLocaleDateString('en-US')}`;
     const funnelsCollectionRef = collection(db, 'users', userId, 'funnels');
     
     const funnelData = {

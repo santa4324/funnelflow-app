@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { ArrowLeft, FileText, Mail, PartyPopper, MessageSquareQuote } from 'lucide-react';
-import { format } from 'date-fns';
 
 export default function FunnelDetailPage() {
   const { user } = useAuth();
@@ -77,7 +76,7 @@ export default function FunnelDetailPage() {
         <CardHeader>
           <CardTitle className="font-headline text-2xl">{funnel.name}</CardTitle>
           <CardDescription>
-            Generated on {format(funnel.createdAt, 'PPPp')} for the business "{funnel.businessInfo.businessName}"
+            Generated on {funnel.createdAt.toLocaleString()} for the business "{funnel.businessInfo.businessName}"
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -8,7 +8,6 @@ import { getFunnels } from '@/lib/firestore';
 import type { Funnel } from '@/lib/types';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { format } from 'date-fns';
 import { FilePlus, Eye, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -83,7 +82,7 @@ export default function FunnelsPage() {
             <Card key={funnel.id} className="flex flex-col">
               <CardHeader>
                 <CardTitle className="font-headline text-xl">{funnel.name}</CardTitle>
-                <CardDescription>Created on {format(funnel.createdAt, 'PPP')}</CardDescription>
+                <CardDescription>Created on {funnel.createdAt.toLocaleDateString()}</CardDescription>
               </CardHeader>
               <CardContent className="flex-1">
                 <p className="text-sm text-muted-foreground">
