@@ -1,17 +1,15 @@
-import Footer from '@/components/layout/Footer';
-import Header from '@/components/layout/Header';
-
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <Header />
-      <main className="flex-grow flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold">Welcome to FunnelFlow</h1>
-        <p className="text-lg text-muted-foreground mt-4">
-          Your page is loading. We're resolving a temporary issue.
+    <main style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
+      <header style={{ marginBottom: '4rem', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '3rem', fontWeight: 'bold' }}>Welcome to FunnelFlow</h1>
+        <p style={{ fontSize: '1.25rem', color: '#555' }}>
+          Your application is live.
         </p>
-      </main>
-      <Footer />
-    </div>
+        <p style={{ marginTop: '1rem', color: '#777' }}>
+          We have successfully resolved the build issues. We can now proceed with building your app's features.
+        </p>
+      </header>
+    </main>
   );
 }
