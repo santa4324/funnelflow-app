@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getFunnels } from '@/lib/firestore';
 import type { Funnel } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, BarChart2 } from 'lucide-react';
+import { AlertCircle, Eye, Users, DollarSign, Percent } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export default function AnalyticsPage() {
@@ -69,33 +69,70 @@ export default function AnalyticsPage() {
       </Card>
       
       {selectedFunnelId && (
-        <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-                <CardHeader>
-                <CardTitle>Funnel Performance</CardTitle>
-                <CardDescription>Simulated snapshot of visitors, leads, and customers for '{selectedFunnel?.name}'.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col items-center justify-center h-[300px] text-center text-muted-foreground bg-muted/50 rounded-lg p-6">
-                        <BarChart2 className="h-12 w-12 mb-4 text-primary" />
-                        <h3 className="text-lg font-semibold text-foreground">Analytics Temporarily Unavailable</h3>
-                        <p className="text-sm">The charting library is being updated to resolve a build issue. This feature will be back online shortly.</p>
-                    </div>
-                </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                <CardTitle>Lead Generation (Last 7 Days)</CardTitle>
-                <CardDescription>Simulated number of new leads acquired over time.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex flex-col items-center justify-center h-[300px] text-center text-muted-foreground bg-muted/50 rounded-lg p-6">
-                        <BarChart2 className="h-12 w-12 mb-4 text-primary" />
-                        <h3 className="text-lg font-semibold text-foreground">Analytics Temporarily Unavailable</h3>
-                        <p className="text-sm">The charting library is being updated to resolve a build issue. This feature will be back online shortly.</p>
-                    </div>
-                </CardContent>
-            </Card>
+        <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Total Visitors
+                        </CardTitle>
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">12,234</div>
+                        <p className="text-xs text-muted-foreground">
+                            +20.1% from last month
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Leads Generated
+                        </CardTitle>
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">+235</div>
+                        <p className="text-xs text-muted-foreground">
+                            +180.1% from last month
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+                        <Percent className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">1.92%</div>
+                        <p className="text-xs text-muted-foreground">
+                            +0.5% from last month
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">
+                            Simulated Revenue
+                        </CardTitle>
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">$1,450.00</div>
+                        <p className="text-xs text-muted-foreground">
+                            Based on new leads
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Charting Feature Under Maintenance</AlertTitle>
+                <AlertDescription>
+                    Visual charts are temporarily disabled while we implement a more robust solution. The stats above are simulated.
+                </AlertDescription>
+            </Alert>
         </div>
       )}
     </main>
