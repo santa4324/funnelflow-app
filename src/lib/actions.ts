@@ -49,5 +49,5 @@ export async function captureLead(
 
 export async function sendBulkEmail(userId: string, funnelId: string, emailIdentifier: string) {
     console.log(`Attempted to send email for user ${userId}, funnel ${funnelId}. Email services are temporarily disabled.`);
-    return { success: false, message: 'Email sending is temporarily disabled while we resolve build issues. Please try again later.' };
+    return { success: false, message: 'Email sending is temporarily disabled to ensure build stability. Please try again later.' };
 }

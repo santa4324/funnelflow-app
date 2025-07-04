@@ -60,5 +60,9 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3"
+  },
+  "overrides": {
+    "genkit": "0.5.0",
+    "@genkit-ai/googleai": "0.5.0"
   }
 }

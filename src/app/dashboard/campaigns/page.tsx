@@ -51,36 +51,9 @@ export default function CampaignsPage() {
     toast({
         variant: 'destructive',
         title: 'Feature Disabled',
-        description: 'Email sending is temporarily unavailable while we resolve build issues. Please try again later.',
+        description: 'Email sending is temporarily unavailable. This feature will be restored shortly.',
     });
     return;
-
-    // The original logic is kept here but is unreachable.
-    /*
-    if (!user) return;
-    const emailIdentifier = `email-${emailIndex}`;
-    const stateKey = `${funnelId}-${emailIdentifier}`;
-    
-    setSendingState(prev => ({ ...prev, [stateKey]: true }));
-
-    const result = await sendBulkEmail(user.uid, funnelId, emailIdentifier);
-
-    if (result.success) {
-      toast({
-        title: 'Campaign Sent!',
-        description: result.message,
-      });
-      refreshLeads();
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Campaign Failed',
-        description: result.message,
-      });
-    }
-
-    setSendingState(prev => ({ ...prev, [stateKey]: false }));
-    */
   };
 
   if (loading) {
@@ -115,7 +88,7 @@ export default function CampaignsPage() {
             <Ban className="h-4 w-4" />
             <AlertTitle>Email Campaigns Temporarily Disabled</AlertTitle>
             <AlertDescription>
-              The Mailgun integration is currently disabled to resolve a build issue. This feature will be restored shortly.
+              The email sending integration is currently disabled to ensure build stability. This feature will be restored shortly.
             </AlertDescription>
           </Alert>
           {funnels.length > 0 ? (
