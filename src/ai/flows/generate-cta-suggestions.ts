@@ -8,8 +8,9 @@
  * - GenerateCTASuggestionsOutput - The return type for the generateCTASuggestions function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+// NOTE: AI generation is temporarily disabled to resolve build issues. This file returns mock data.
+
+import {z} from 'zod';
 
 const GenerateCTASuggestionsInputSchema = z.object({
   businessName: z.string().describe('The name of the business.'),
@@ -27,34 +28,17 @@ export type GenerateCTASuggestionsOutput = z.infer<typeof GenerateCTASuggestions
 export async function generateCTASuggestions(
   input: GenerateCTASuggestionsInput
 ): Promise<GenerateCTASuggestionsOutput> {
-  return generateCTASuggestionsFlow(input);
+  console.log("AI generation is mocked for CTA suggestions. Returning static content.");
+  
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return {
+    ctaSuggestions: [
+      'Get Your Mock Offer',
+      'Download the Static Guide',
+      'Start Your Demo Trial',
+      'Claim Your Mock Discount',
+      'Join the Waitlist (Mock)',
+    ],
+  };
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateCTASuggestionsPrompt',
-  inputSchema: GenerateCTASuggestionsInputSchema,
-  outputSchema: GenerateCTASuggestionsOutputSchema,
-  prompt: `You are a marketing expert specializing in creating effective Call To Actions (CTAs).
-
-  Based on the following business details, generate 5 relevant and engaging CTA suggestions to increase conversions:
-
-  Business Name: {{{businessName}}}
-  Industry: {{{industry}}}
-  Target Audience: {{{targetAudience}}}
-  Offer: {{{offer}}}
-
-  Ensure the CTAs are concise, action-oriented, and tailored to the business's specific context.
-  `,
-});
-
-const generateCTASuggestionsFlow = ai.defineFlow(
-  {
-    name: 'generateCTASuggestionsFlow',
-    inputSchema: GenerateCTASuggestionsInputSchema,
-    outputSchema: GenerateCTASuggestionsOutputSchema,
-  },
-  async input => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

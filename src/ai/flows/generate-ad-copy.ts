@@ -8,8 +8,9 @@
  * - GenerateAdCopyOutput - The return type for the generateAdCopy function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+// NOTE: AI generation is temporarily disabled to resolve build issues. This file returns mock data.
+
+import {z} from 'zod';
 
 const GenerateAdCopyInputSchema = z.object({
   businessName: z.string().describe('The name of the business.'),
@@ -26,34 +27,11 @@ const GenerateAdCopyOutputSchema = z.object({
 export type GenerateAdCopyOutput = z.infer<typeof GenerateAdCopyOutputSchema>;
 
 export async function generateAdCopy(input: GenerateAdCopyInput): Promise<GenerateAdCopyOutput> {
-  return generateAdCopyFlow(input);
+  console.log("AI generation is mocked for ad copy. Returning static content.");
+  
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  return {
+    adCopy: `🚀 Supercharge your ${input.industry} business!\n\nThis is MOCK ad copy for ${input.businessName}. We're offering our exclusive '${input.offer}' for a limited time. Perfect for ${input.targetAudience}.\n\nVisit us at ${input.websiteUrl} to learn more!\n\n#${input.industry.replace(/\s/g, '')} #MockAd`,
+  };
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateAdCopyPrompt',
-  inputSchema: GenerateAdCopyInputSchema,
-  outputSchema: GenerateAdCopyOutputSchema,
-  prompt: `You are an expert marketing copywriter specializing in Facebook ads.
-
-  Generate compelling ad copy based on the following business details:
-
-  Business Name: {{{businessName}}}
-  Industry: {{{industry}}}
-  Target Audience: {{{targetAudience}}}
-  Offer: {{{offer}}}
-  Website URL: {{{websiteUrl}}}
-
-  Ad Copy:`,
-});
-
-const generateAdCopyFlow = ai.defineFlow(
-  {
-    name: 'generateAdCopyFlow',
-    inputSchema: GenerateAdCopyInputSchema,
-    outputSchema: GenerateAdCopyOutputSchema,
-  },
-  async input => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

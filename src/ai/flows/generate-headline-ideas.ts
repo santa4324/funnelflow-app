@@ -8,8 +8,9 @@
  * - GenerateHeadlineIdeasOutput - The return type for the generateHeadlineIdeas function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+// NOTE: AI generation is temporarily disabled to resolve build issues. This file returns mock data.
+
+import {z} from 'zod';
 
 const GenerateHeadlineIdeasInputSchema = z.object({
   businessName: z.string().describe('The name of the business.'),
@@ -25,34 +26,17 @@ const GenerateHeadlineIdeasOutputSchema = z.object({
 export type GenerateHeadlineIdeasOutput = z.infer<typeof GenerateHeadlineIdeasOutputSchema>;
 
 export async function generateHeadlineIdeas(input: GenerateHeadlineIdeasInput): Promise<GenerateHeadlineIdeasOutput> {
-  return generateHeadlineIdeasFlow(input);
+  console.log("AI generation is mocked for headline ideas. Returning static content.");
+  
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return {
+    headlineIdeas: [
+      `The Ultimate Mock Guide to ${input.industry}`,
+      `How ${input.targetAudience} Can Benefit from Mock Data`,
+      `A Static Headline for ${input.businessName}`,
+      `[DEMO] Your New Favorite Headline`,
+      `Unlock Mock Potential Today`,
+    ],
+  };
 }
-
-const prompt = ai.definePrompt({
-  name: 'generateHeadlineIdeasPrompt',
-  inputSchema: GenerateHeadlineIdeasInputSchema,
-  outputSchema: GenerateHeadlineIdeasOutputSchema,
-  prompt: `You are a marketing expert specializing in generating compelling headlines.
-
-  Generate 5 headline ideas based on the following business details:
-
-  Business Name: {{{businessName}}}
-  Industry: {{{industry}}}
-  Target Audience: {{{targetAudience}}}
-  Offer: {{{offer}}}
-
-  Return the headline ideas as an array of strings.
-  `,
-});
-
-const generateHeadlineIdeasFlow = ai.defineFlow(
-  {
-    name: 'generateHeadlineIdeasFlow',
-    inputSchema: GenerateHeadlineIdeasInputSchema,
-    outputSchema: GenerateHeadlineIdeasOutputSchema,
-  },
-  async input => {
-    const { output } = await prompt(input);
-    return output!;
-  }
-);

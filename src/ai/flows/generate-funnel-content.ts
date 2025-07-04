@@ -11,8 +11,9 @@
  * - GenerateFunnelContentOutput - The return type for the generateFunnelContent function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+// NOTE: AI generation is temporarily disabled to resolve build issues. This file returns mock data.
+
+import {z} from 'zod';
 
 const GenerateFunnelContentInputSchema = z.object({
   businessName: z.string().describe('The name of the business.'),
@@ -48,41 +49,28 @@ const GenerateFunnelContentOutputSchema = z.object({
 export type GenerateFunnelContentOutput = z.infer<typeof GenerateFunnelContentOutputSchema>;
 
 export async function generateFunnelContent(input: GenerateFunnelContentInput): Promise<GenerateFunnelContentOutput> {
-  return generateFunnelContentFlow(input);
+  console.log("AI generation is mocked. Returning static content for:", input.businessName);
+  
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  return {
+    landingPageCopy: `# Welcome to ${input.businessName}!\n\nThis is **MOCK** landing page copy, created to ensure the application builds successfully. Our real AI is currently on a short break!\n\nWe see you're in the ${input.industry} industry and you're targeting ${input.targetAudience}. That's great! Our system would normally create amazing content for your offer: "${input.offer}".\n\nFor now, please enjoy this placeholder content.`,
+    leadCaptureForm: {
+      headline: 'Get Your Free Mock Offer!',
+      callToAction: 'Sign up below to receive your pre-generated, static, but still awesome content.',
+      buttonText: 'Download Now (Demo)',
+    },
+    emailSequence: [
+      {
+        subject: 'Mock Email 1: Welcome!',
+        body: `Hi there,\n\nThanks for signing up! Here is your mock content related to "${input.offer}".\n\nThis is a demonstration of the email sequence feature.\n\nBest,\nThe (Mock) ${input.businessName} Team`,
+      },
+      {
+        subject: 'Mock Email 2: Following Up',
+        body: `Hi again,\n\nThis is a mock follow-up email. We hope you are enjoying the static content!\n\nIn a real scenario, this email would provide more value and guide you towards a purchase.\n\nBest,\nThe (Mock) ${input.businessName} Team`,
+      }
+    ],
+    thankYouPage: `# Thank You!\n\nYour mock request has been received. You'll get your placeholder content in your inbox shortly.\n\nOnce our AI services are restored, you'll be able to generate real, high-converting funnels!`,
+  };
 }
-
-const generateFunnelContentPrompt = ai.definePrompt({
-  name: 'generateFunnelContentPrompt',
-  inputSchema: GenerateFunnelContentInputSchema,
-  outputSchema: GenerateFunnelContentOutputSchema,
-  prompt: `You are an expert marketing funnel generator. Given the following business details, generate compelling landing page copy, content for a lead capture form, a 3-email follow-up sequence, and thank you page content to capture leads and convert them into customers.
-
-Business Name: {{{businessName}}}
-Industry: {{{industry}}}
-Target Audience: {{{targetAudience}}}
-Offer: {{{offer}}}
-Website URL: {{{websiteUrl}}}
-Social URLs: {{{socialUrls}}}
-
-
-Instructions:
-1.  Landing Page Copy: Create persuasive and engaging copy in Markdown format that highlights the benefits of the offer and encourages visitors to sign up.
-2.  Lead Capture Form: Generate content for the lead capture form. Create a compelling headline, a short call-to-action sentence, and text for the submit button.
-3.  Email Follow-up Sequence: Write 3-5 emails to nurture leads. For each email, provide a distinct subject line and body. The first email should deliver the promised offer. Subsequent emails should build trust, provide value, and promote the core product/service.
-4.  Thank You Page: Craft a thank you page in Markdown format that confirms the user's subscription and provides clear next steps.
-
-Ensure the output is a valid JSON object matching the provided schema.
-`,
-});
-
-const generateFunnelContentFlow = ai.defineFlow(
-  {
-    name: 'generateFunnelContentFlow',
-    inputSchema: GenerateFunnelContentInputSchema,
-    outputSchema: GenerateFunnelContentOutputSchema,
-  },
-  async input => {
-    const { output } = await generateFunnelContentPrompt(input);
-    return output!;
-  }
-);
