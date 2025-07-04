@@ -1,12 +1,14 @@
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+
 export default function Home() {
   return (
-    <main>
-      <h1>Build Successful!</h1>
-      <p>
-        The application is now live and stable. We can now begin rebuilding the
-        features you want on this solid foundation.
-      </p>
-      <p>Thank you for your patience.</p>
-    </main>
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* <Header /> */}
+      <main className="flex-grow flex items-center justify-center">
+        <h1 className="text-4xl font-bold font-headline">Debugging: Page Render OK</h1>
+      </main>
+      {/* <Footer /> */}
+    </div>
   );
 }
