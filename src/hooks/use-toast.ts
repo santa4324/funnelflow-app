@@ -1,7 +1,9 @@
 // Inspired by react-hot-toast library
 import * as React from "react"
 
-type ToasterToast = ToastProps & {
+import type { ToastProps as ToastPrimitivesProps } from "@/components/ui/toast"
+
+type ToasterToast = ToastPrimitivesProps & {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
@@ -25,7 +27,15 @@ export function useToast() {
   const context = React.useContext(ToastContext)
 
   if (!context) {
-    throw new Error("useToast must be used within a ToastProvider")
+    // Return a dummy object that does nothing to prevent crashes
+    // if the hook is used outside of a provider.
+    return {
+      toast: () => {
+        console.warn("Toast provider not found. Skipping toast.")
+      },
+      dismiss: () => {},
+      toasts: [],
+    }
   }
 
   return context
