@@ -1,12 +1,10 @@
 {
-  "name": "funnelflow",
+  "name": "funnelflow-app",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "build": "next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
