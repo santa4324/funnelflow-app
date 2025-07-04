@@ -2,3 +2,4 @@
 # https://firebase.google.com/docs/app-hosting/configure
 
 runtime: nodejs20
+entrypoint: npm run start
