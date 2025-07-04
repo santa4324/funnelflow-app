@@ -1,6 +1,7 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   experimental: {
     // This is required for the cloud environment and Turbopack.
     allowedDevOrigins: ['https://*.cloudworkstations.dev'],
