@@ -7,9 +7,8 @@ runConfig:
   maxInstances: 1
 
 # Explicitly define the build command.
-# App Hosting will automatically run `npm install` before this.
 buildConfig:
-  buildCommand: npm run build
+  buildCommand: npm install && npm run build
 
 # Defines how to run the production server.
 # The default `start` script is `next start`.
