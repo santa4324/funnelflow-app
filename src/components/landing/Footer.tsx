@@ -11,7 +11,7 @@ export function Footer() {
             <span className="font-bold font-headline text-lg">FunnelFlow</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} FunnelFlow. All rights reserved.
+            © 2024 FunnelFlow. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
