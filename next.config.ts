@@ -2,16 +2,6 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  experimental: {
-    // This is required for the cloud environment and Turbopack.
-    allowedDevOrigins: ['https://*.cloudworkstations.dev'],
-    turbopack: {
-      resolveAlias: {
-        // This prevents the 'async_hooks' module from being bundled on the client.
-        'async_hooks': false,
-      },
-    },
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
