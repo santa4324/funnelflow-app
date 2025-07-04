@@ -5,11 +5,3 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
-
-# Explicitly define the build command.
-buildConfig:
-  buildCommand: npm install && npm run build
-
-# Defines how to run the production server.
-# The default `start` script is `next start`.
-startCommand: npm start
