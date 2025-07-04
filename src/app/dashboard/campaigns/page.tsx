@@ -1,4 +1,4 @@
-// This page is temporarily disabled to resolve build issues.
+
 export default function CampaignsPage() {
-  return <h1>Campaigns (Coming Soon)</h1>;
+  return <h1 className="text-2xl font-bold p-8">Campaigns (Coming Soon)</h1>;
 }
