@@ -1,13 +1,11 @@
-npm run build
-
-/FunnelGenerator
 'use client';
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BusinessSetupForm } from '@/components/dashboard/BusinessSetupForm';
-import { FunnelGenerator } from './FunnelGenerator';import type { BusinessInfo } from '@/lib/types';
+import { FunnelGenerator } from '@/components/dashboard/FunnelGenerator';
+import type { BusinessInfo } from '@/lib/types';
 import type { GenerateFunnelContentOutput } from '@/ai/flows/generate-funnel-content';
 
 export default function DashboardPage() {
