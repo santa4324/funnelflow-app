@@ -1,6 +1,5 @@
 'use client';
-
-// The @next/third-parties package was causing build issues and has been removed.
+// This component is temporarily disabled to resolve build issues.
 export function GoogleAnalytics() {
   return null;
 }
