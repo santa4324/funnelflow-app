@@ -1,6 +1,6 @@
 export default function Home() {
   return (
-    <main style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
+    <main>
       <h1>Build Successful!</h1>
       <p>
         The application is now live and stable. We can now begin rebuilding the
