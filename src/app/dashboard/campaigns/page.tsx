@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/context/AuthContext';
 import { getFunnels, getLeads } from '@/lib/firestore';
 import type { Funnel, Lead } from '@/lib/types';
-import { Mail, Send, Loader2, Check, AlertCircle, Inbox } from 'lucide-react';
+import { Mail, Send, Loader2, Check, AlertCircle, Inbox, Ban } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { sendBulkEmail } from '@/lib/actions';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -48,6 +48,15 @@ export default function CampaignsPage() {
   }, [leads]);
 
   const handleSendEmail = async (funnelId: string, emailIndex: number) => {
+    toast({
+        variant: 'destructive',
+        title: 'Feature Disabled',
+        description: 'Email sending is temporarily unavailable while we resolve build issues. Please try again later.',
+    });
+    return;
+
+    // The original logic is kept here but is unreachable.
+    /*
     if (!user) return;
     const emailIdentifier = `email-${emailIndex}`;
     const stateKey = `${funnelId}-${emailIdentifier}`;
@@ -71,6 +80,7 @@ export default function CampaignsPage() {
     }
 
     setSendingState(prev => ({ ...prev, [stateKey]: false }));
+    */
   };
 
   if (loading) {
@@ -101,6 +111,13 @@ export default function CampaignsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <Alert variant="destructive" className="mb-6">
+            <Ban className="h-4 w-4" />
+            <AlertTitle>Email Campaigns Temporarily Disabled</AlertTitle>
+            <AlertDescription>
+              The Mailgun integration is currently disabled to resolve a build issue. This feature will be restored shortly.
+            </AlertDescription>
+          </Alert>
           {funnels.length > 0 ? (
             <Accordion type="single" collapsible className="w-full space-y-4">
               {funnels.map(funnel => {
@@ -133,11 +150,11 @@ export default function CampaignsPage() {
                                 <div className="flex flex-col items-center gap-2 pl-4">
                                   <Button 
                                     onClick={() => handleSendEmail(funnel.id, index)} 
-                                    disabled={sendingState[stateKey] || leadsToSendTo === 0}
+                                    disabled={true} // Feature disabled
                                     className="w-40"
                                     variant="outline"
                                   >
-                                    {sendingState[stateKey] ? <Loader2 className="animate-spin" /> : <Send />}
+                                    <Send />
                                     <span>Send to {leadsToSendTo}</span>
                                   </Button>
                                   <div className="text-xs text-muted-foreground flex items-center gap-1">

@@ -31,8 +31,8 @@ export async function generateAdCopy(input: GenerateAdCopyInput): Promise<Genera
 
 const prompt = ai.definePrompt({
   name: 'generateAdCopyPrompt',
-  input: {schema: GenerateAdCopyInputSchema},
-  output: {schema: GenerateAdCopyOutputSchema},
+  inputSchema: GenerateAdCopyInputSchema,
+  outputSchema: GenerateAdCopyOutputSchema,
   prompt: `You are an expert marketing copywriter specializing in Facebook ads.
 
   Generate compelling ad copy based on the following business details:
@@ -53,7 +53,7 @@ const generateAdCopyFlow = ai.defineFlow(
     outputSchema: GenerateAdCopyOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

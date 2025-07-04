@@ -30,8 +30,8 @@ export async function generateHeadlineIdeas(input: GenerateHeadlineIdeasInput): 
 
 const prompt = ai.definePrompt({
   name: 'generateHeadlineIdeasPrompt',
-  input: {schema: GenerateHeadlineIdeasInputSchema},
-  output: {schema: GenerateHeadlineIdeasOutputSchema},
+  inputSchema: GenerateHeadlineIdeasInputSchema,
+  outputSchema: GenerateHeadlineIdeasOutputSchema,
   prompt: `You are a marketing expert specializing in generating compelling headlines.
 
   Generate 5 headline ideas based on the following business details:
@@ -52,7 +52,7 @@ const generateHeadlineIdeasFlow = ai.defineFlow(
     outputSchema: GenerateHeadlineIdeasOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

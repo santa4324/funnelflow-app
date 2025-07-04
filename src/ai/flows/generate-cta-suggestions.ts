@@ -32,8 +32,8 @@ export async function generateCTASuggestions(
 
 const prompt = ai.definePrompt({
   name: 'generateCTASuggestionsPrompt',
-  input: {schema: GenerateCTASuggestionsInputSchema},
-  output: {schema: GenerateCTASuggestionsOutputSchema},
+  inputSchema: GenerateCTASuggestionsInputSchema,
+  outputSchema: GenerateCTASuggestionsOutputSchema,
   prompt: `You are a marketing expert specializing in creating effective Call To Actions (CTAs).
 
   Based on the following business details, generate 5 relevant and engaging CTA suggestions to increase conversions:
@@ -54,7 +54,7 @@ const generateCTASuggestionsFlow = ai.defineFlow(
     outputSchema: GenerateCTASuggestionsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const { output } = await prompt(input);
     return output!;
   }
 );

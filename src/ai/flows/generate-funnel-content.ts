@@ -53,8 +53,8 @@ export async function generateFunnelContent(input: GenerateFunnelContentInput): 
 
 const generateFunnelContentPrompt = ai.definePrompt({
   name: 'generateFunnelContentPrompt',
-  input: {schema: GenerateFunnelContentInputSchema},
-  output: {schema: GenerateFunnelContentOutputSchema},
+  inputSchema: GenerateFunnelContentInputSchema,
+  outputSchema: GenerateFunnelContentOutputSchema,
   prompt: `You are an expert marketing funnel generator. Given the following business details, generate compelling landing page copy, content for a lead capture form, a 3-email follow-up sequence, and thank you page content to capture leads and convert them into customers.
 
 Business Name: {{{businessName}}}
@@ -82,7 +82,7 @@ const generateFunnelContentFlow = ai.defineFlow(
     outputSchema: GenerateFunnelContentOutputSchema,
   },
   async input => {
-    const {output} = await generateFunnelContentPrompt(input);
+    const { output } = await generateFunnelContentPrompt(input);
     return output!;
   }
 );

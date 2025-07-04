@@ -1,7 +1,6 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import React from 'react';
 
 type AnimatedSectionProps = {
   children: React.ReactNode;
@@ -9,18 +8,10 @@ type AnimatedSectionProps = {
 };
 
 export default function AnimatedSection({ children, className }: AnimatedSectionProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
+  // Animations removed to simplify dependencies and resolve build issues.
   return (
-    <motion.section
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-    >
+    <section className={className}>
       {children}
-    </motion.section>
+    </section>
   );
 }

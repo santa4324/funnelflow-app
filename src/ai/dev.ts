@@ -1,6 +1,3 @@
-import { config } from 'dotenv';
-config();
-
 import '@/ai/flows/generate-funnel-content.ts';
 import '@/ai/flows/generate-headline-ideas.ts';
 import '@/ai/flows/generate-email-subject-lines.ts';

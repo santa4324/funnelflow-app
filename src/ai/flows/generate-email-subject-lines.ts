@@ -21,7 +21,7 @@ export type GenerateEmailSubjectLinesInput = z.infer<typeof GenerateEmailSubject
 const GenerateEmailSubjectLinesOutputSchema = z.object({
   subjectLines: z
     .array(z.string())
-    .describe('An array of generated email subject lines.'),
+    .describe('An array of 5 generated email subject lines.'),
 });
 export type GenerateEmailSubjectLinesOutput = z.infer<typeof GenerateEmailSubjectLinesOutputSchema>;
 
@@ -33,16 +33,14 @@ export async function generateEmailSubjectLines(
 
 const prompt = ai.definePrompt({
   name: 'generateEmailSubjectLinesPrompt',
-  input: {schema: GenerateEmailSubjectLinesInputSchema},
-  output: {schema: GenerateEmailSubjectLinesOutputSchema},
+  inputSchema: GenerateEmailSubjectLinesInputSchema,
+  outputSchema: GenerateEmailSubjectLinesOutputSchema,
   prompt: `You are an expert email marketer. Generate 5 highly engaging email subject lines based on the following business details:
 
 Business Name: {{{businessName}}}
 Industry: {{{industry}}}
 Target Audience: {{{targetAudience}}}
-Offer: {{{offer}}}
-
-Subject Lines (separated by newlines):`,
+Offer: {{{offer}}}`,
 });
 
 const generateEmailSubjectLinesFlow = ai.defineFlow(
@@ -52,21 +50,7 @@ const generateEmailSubjectLinesFlow = ai.defineFlow(
     outputSchema: GenerateEmailSubjectLinesOutputSchema,
   },
   async input => {
-    const {text} = await ai.generate({
-      prompt: `Generate 5 highly engaging email subject lines based on the following business details:
-
-Business Name: ${input.businessName}
-Industry: ${input.industry}
-Target Audience: ${input.targetAudience}
-Offer: ${input.offer}
-
-Subject Lines (separated by newlines):`,
-      model: 'models/text-bison-001',
-      config: {temperature: 0.7},
-    });
-
-    const subjectLines = text!.split('\n').map(line => line.trim());
-
-    return {subjectLines};
+    const { output } = await prompt(input);
+    return output!;
   }
 );
