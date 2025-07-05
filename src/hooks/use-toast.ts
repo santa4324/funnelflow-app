@@ -109,6 +109,8 @@ export function reducer(state: ToasterProps, action: any): ToasterProps {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
+    default:
+      return state
   }
 }
 
