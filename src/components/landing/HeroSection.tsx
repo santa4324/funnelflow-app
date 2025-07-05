@@ -10,7 +10,7 @@ export function HeroSection() {
         <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
           <div className="space-y-6 text-center md:text-left">
             <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-              Build High-Converting Funnels in Minutes
+              Your High-Converting Funnels are Almost Ready
             </h1>
             <p className="text-lg text-muted-foreground md:text-xl">
               Let AI be your expert copywriter. FunnelFlow generates entire marketing funnels, from landing pages to email sequences, so you can focus on growing your business.
